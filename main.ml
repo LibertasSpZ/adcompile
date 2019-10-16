@@ -301,26 +301,40 @@ let test_p4 =
   let s4 = unparse_UnderlineCom c4 in
   print_endline s4
 
-  (* let () =  
-  let c2 = test_p2 in 
-  let s2 = unparse_com c2 in
-  
-  
-  Printf.sprintf "%s" "\r" *)
+   
 
-  
-  (*let c2 = test_p2 in
-  let c3 = test_p3 in 
-  let c4 = test_p4 in
-  (* let c = Skip in  *)
-  
-  let s2 = unparse_com c2 in
-  let s3 = unparse_UNcom c3 in 
-  let s4 = unparse_UnderlineCom in
-  print_endline (* Printf.sprintf "%s"*)  s1  ^ "\r\r" ^ s2 ^ "\r\r" ^ s3 ^ "\r\r" ^ s4 *)
+
+(* Code Transformation Rules (Figure 6) *)
+
+
+(* First, given any normal parameterized program, we view it
+as the corresponding non-det parameterized program. A func 
+tranforming it naturally (i.e. takes a normal and returns a non-det0) 
+is in order.*)
+
+let normalUnitToNonDetUnit u : underlineUnitary =
+  match u with 
+  | Gate (u, pl) -> UnderlineGate(u, pl)
+
+let rec normalToNonDet u : underlineCom =
+  match u with 
+  | Abort ql -> UnderlineAbort ql
+  | Skip ql -> UnderlineSkip ql 
+  | Init q -> UnderlineInit q
+  | Uapp (u, ql) -> UnderlineUapp (normalUnitToNonDetUnit (u), ql)
+  | Seq (c1, c2) -> UnderlineSeq (normalToNonDet c1, normalToNonDet c2)
+  | Case (qb, u1, u2) ->
+     UnderlineCase(qb, normalToNonDet u1, normalToNonDet u2)
+  | Bwhile (num, qb, u1) ->
+     UnderlineBwhile(num, qb, normalToNonDet u1)
+
+(* Then it's application of code tranformation rules. the rules
+should still be non-det to non-det, as the paper said.*)
+
+
 
   (* TODO: We need to be assign values to parameters,
-     so need a function type assign: parid -> float;
+     so need a function type assign: parid -> float: done.
 
      We also need to define a function type mapping from parameterized
      unitary to actual unitaries, i.e.
