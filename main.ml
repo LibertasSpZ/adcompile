@@ -1,5 +1,14 @@
 type qid = string
 type uid = string
+
+(* uid "X"
+uid "Y"
+uid "Z"
+
+uid "XX"
+uid "YY"
+uid "ZZ" *)
+
 type parid = string
 (* theta1, theta2 etc  *)
 type par = parid list
@@ -24,7 +33,11 @@ type qlist = qbit list
 (* below: syntax for parameterized progs (\S 4.1) *)
 type unitary = 
 | Gate of uid * par
-(* The above: parameterized unitary, e.g U(theta_1, theta_2)*)
+| OneBRot of uid * par (* e^{-i * theta/2 * X}, etc *)
+| TwoBRot of uid * par 
+(* e^{-i * theta/2 * X\otimes X}, etc*)
+(* The above: parameterized unitary, 
+  e.g U(theta_1, theta_2)*)
 
 type com =
 | Abort of qlist
@@ -61,6 +74,12 @@ let rec unparse_par theta : string =
 let unparse_unitary u : string =
   match u with
   | Gate (g, t) -> 
+     let st = unparse_par t in 
+     g ^ "(" ^ st ^ ")"
+  | OneBRot (g, t) -> 
+     let st = unparse_par t in 
+     g ^ "(" ^ st ^ ")"
+  | TwoBRot (g, t) -> 
      let st = unparse_par t in 
      g ^ "(" ^ st ^ ")"
 
@@ -100,7 +119,9 @@ let rec unparse_com c : string =
 
 type unparunitary = 
 | UnparGate of uid * evaledpar 
- 
+| UnparOneBRot of uid * evaledpar 
+| UnparTwoBRot of uid * evaledpar 
+
 (* The above:  e.g U(0.5, 0.7). *)
 
  type uNcom = 
@@ -127,7 +148,12 @@ let unparse_unparunitary u : string =
   | UnparGate (g, t) -> 
      let st = unparse_evaledpar t in 
      g ^ "(" ^ st ^ ")"
-
+  | UnparOneBRot (g, t) -> 
+     let st = unparse_evaledpar t in 
+     g ^ "(" ^ st ^ ")"
+  | UnparTwoBRot (g, t) -> 
+     let st = unparse_evaledpar t in 
+     g ^ "(" ^ st ^ ")"
 
 let rec unparse_UNcom c : string = 
   match c with
@@ -165,6 +191,9 @@ let rec unparse_UNcom c : string =
 (* below: syntax for non-deterministic parameterized progs (\S 5.1) *)
 type underlineUnitary = 
 | UnderlineGate of uid * par
+| UnderlineOneBRot of uid * par
+| UnderlineTwoBRot of uid * par
+
 (* The above: parameterized unitary with non-det type (before compilation),
  e.g \underline{U(theta_1, theta_2)} *)
 
@@ -185,6 +214,13 @@ let unparse_UnderlineUnitary u : string =
   | UnderlineGate (g, t) -> 
      let st = unparse_par t in 
      g ^ "(" ^ st ^ ")"
+  | UnderlineOneBRot (g, t) -> 
+     let st = unparse_par t in 
+     g ^ "(" ^ st ^ ")"
+  | UnderlineTwoBRot (g, t) -> 
+     let st = unparse_par t in 
+     g ^ "(" ^ st ^ ")"
+
 
 let rec unparse_UnderlineCom c : string = 
   match c with
@@ -253,8 +289,8 @@ Printf.sprintf "\r" *)
 let test_p3 =
   let c0 = UNInit (Qvar "q0") in
   let c1 = UNInit (Qvar "q1") in
-  let c2 = (UNUapp (UnparGate ("XX", [0.99]), [Qvar "q0"; Qvar "q1"])) in
-  let c3 = (UNUapp (UnparGate ("YY", [0.66]), [Qvar "q0"; Qvar "q1"])) in
+  let c2 = (UNUapp (UnparTwoBRot ("XX", [0.99]), [Qvar "q0"; Qvar "q1"])) in
+  let c3 = (UNUapp (UnparOneBRot ("Y", [0.66]), [Qvar "q0"; Qvar "q1"])) in
   let c4 = UNSeq(UNSeq(c0, c3), UNSeq(c2, c1)) in
   let c5 = UNSeq(UNSeq(c2, c0), UNSeq(c1, c3)) in 
   let guard = Qvar "q3" in 
@@ -271,8 +307,8 @@ Printf.sprintf "\r"  *)
 let test_p4 =
   let c0 = UnderlineInit (Qvar "q0") in
   let c1 = UnderlineInit (Qvar "q1") in
-  let c2 = (UnderlineUapp (UnderlineGate ("X", ["theta_1"]), [Qvar "q0"])) in
-  let c3 = (UnderlineUapp (UnderlineGate ("Y", ["theta_2"]), [Qvar "q1"])) in
+  let c2 = (UnderlineUapp (UnderlineOneBRot ("X", ["theta_1"]), [Qvar "q0"])) in
+  let c3 = (UnderlineUapp (UnderlineTwoBRot ("YY", ["theta_2"]), [Qvar "q1"])) in
   let c4 = UnderlineSeq(c1, c2) in
   let c5 = UnderlineAdd(c0, c3) in 
   let guard = Qvar "q3" in 
@@ -301,7 +337,9 @@ let test_p4 =
   let s4 = unparse_UnderlineCom c4 in
   print_endline s4
 
-   
+  let () =
+  let cnextline = "\r" in 
+  print_endline cnextline
 
 
 (* Code Transformation Rules (Figure 6) *)
@@ -315,6 +353,10 @@ is in order.*)
 let normalUnitToNonDetUnit u : underlineUnitary =
   match u with 
   | Gate (u, pl) -> UnderlineGate(u, pl)
+  | OneBRot (u, pl) -> UnderlineOneBRot(u, pl)
+  | TwoBRot (u, pl) -> UnderlineTwoBRot(u, pl)
+
+
 
 let rec normalToNonDet u : underlineCom =
   match u with 
@@ -327,6 +369,22 @@ let rec normalToNonDet u : underlineCom =
      UnderlineCase(qb, normalToNonDet u1, normalToNonDet u2)
   | Bwhile (num, qb, u1) ->
      UnderlineBwhile(num, qb, normalToNonDet u1)
+
+
+let test_p5 =
+  let c0 = Init (Qvar "q0") in
+  let c1 = Init (Qvar "q1") in
+  let c2 = (Uapp (OneBRot ("X", ["theta_1"]), [Qvar "q0"])) in
+  let c3 = (Uapp (TwoBRot ("ZZ", ["theta_2"]), [Qvar "q0"; Qvar "q1"])) in
+  let c4 = Seq(Seq(c0, c1), Seq(c2, c3)) in
+  normalToNonDet (c4)
+
+
+let () =  
+  let c5 = test_p5 in 
+  let s5 = unparse_UnderlineCom c5 in
+  print_endline s5
+
 
 (* Then it's application of code tranformation rules. the rules
 should still be non-det to non-det, as the paper said.*)
