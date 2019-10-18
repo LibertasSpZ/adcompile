@@ -226,35 +226,39 @@ let rec unparse_UnderlineCom c : string =
   match c with
   | UnderlineAbort ql -> 
      let sql = unparse_qlist ql in
-     "___ Abort[" ^ sql ^ "] ___ "
+     " ___ Abort[" ^ sql ^ "] ___ "
   | UnderlineSkip ql -> 
      let sql = unparse_qlist ql in
-      "___ Skip[" ^ sql ^ "] ___ "
+      " ___ Skip[" ^ sql ^ "] ___ "
   | UnderlineInit q -> 
      let s = unparse_qbit q in 
-     "___" ^ s ^ ":=∣0⟩ ___ "
+     " ___ " ^ s ^ ":=∣0⟩ ___ "
   | UnderlineUapp (u, ql) -> 
      let su = unparse_UnderlineUnitary u in 
      let sql = unparse_qlist ql in 
-     "___" ^ sql ^ ":=" ^ su ^ "[" ^ sql ^ "] ___ "
+     " ___ " ^ sql ^ ":=" ^ su ^ "[" ^ sql ^ "] ___ "
   | UnderlineSeq (c1, c2) ->
      let s1 = unparse_UnderlineCom c1 in
      let s2 = unparse_UnderlineCom c2 in
-     "___" ^ s1 ^ "; " ^ s2 ^ "___ "
+     " ___ " ^ s1 ^ "; " ^ s2 ^ " ___ "
   | UnderlineCase (qb, u1, u2) ->
      let q = unparse_qbit qb in
      let s1 = unparse_UnderlineCom u1 in
      let s2 = unparse_UnderlineCom u2 in
-     "___ case M(" ^ q ^ ") = 0 then " ^ s1 ^ "else " ^ s2 ^ "___ "
+     " ___ case M(" ^ q ^ ") = 0 then " ^ s1 ^ "else " ^ s2 ^ " ___ "
   | UnderlineBwhile (num, qb, u1) ->
      let nt = Printf.sprintf "%d" num in
      let q = unparse_qbit qb in
      let s1 = unparse_UnderlineCom u1 in
-     "___ while^" ^ nt ^ " M(" ^ q ^ ")= 1 do " ^ s1 ^ "___ "
+     " ___ while^" ^ nt ^ " M(" ^ q ^ ")= 1 do " ^ s1 ^ " ___ "
   | UnderlineAdd (u1, u2) -> 
      let s1 = unparse_UnderlineCom u1 in
      let s2 = unparse_UnderlineCom u2 in
-     "___" ^ s1 ^ "+" ^ s2 ^ "___ "
+     " ___ " ^ s1 ^ "+" ^ s2 ^ " ___ "
+
+(* Note that when printing we will have different lengths
+ of the " ___ " lines and length correspond to the number
+ of recursive layers. *)    
 (* endof syntax for parameterized progs (\S 5.1) *)
 
 
@@ -386,10 +390,61 @@ let () =
   print_endline s5
 
 
+let () =
+  let cnextline = "\r" in 
+  print_endline cnextline
+
+(* TODO TODO: define unitary differentiation rule first, then use 
+that rule in codeTransformation. *)
+
+let rec codeTransformation u parid: underlineCom = 
+match u with
+| UnderlineAbort ql -> UnderlineAbort (List.append ql [Qvar "A"])
+| UnderlineSkip ql -> UnderlineAbort (List.append ql [Qvar "A"])
+| UnderlineInit q -> UnderlineAbort (List.append [q] [Qvar "A"]) 
+| UnderlineUapp (uu, ql) -> (match uu with
+  | UnderlineGate (uuu, t) -> ( match (List.mem parid t) with 
+    | true -> UnderlineUapp(UnderlineGate(uuu,t), (List.append ql [Qvar "Place holder 00, change later."]))
+    | false -> UnderlineAbort (List.append ql [Qvar "Place holder 01, change later."]) )
+  | UnderlineOneBRot (uuu, t) -> ( match (List.mem parid t) with 
+    | true -> UnderlineUapp(UnderlineGate(uuu,t), (List.append ql [Qvar "Place holder 10, change later."]))
+    | false -> UnderlineAbort (List.append ql [Qvar "Place holder 11, change later."]) )
+  | UnderlineTwoBRot (uuu, t) -> ( match (List.mem parid t) with 
+    | true -> UnderlineUapp(UnderlineGate(uuu,t), (List.append ql [Qvar "Place holder 20, change later."]))
+    | false -> UnderlineAbort (List.append ql [Qvar "Place holder 21, change later."]) )
+  )
+ | UnderlineAdd (u1, u2) -> UnderlineAdd (codeTransformation u1 parid,
+  codeTransformation u2 parid)
+ | UnderlineSeq (u1, u2) -> UnderlineAdd (UnderlineSeq (codeTransformation u1 parid,
+ u2), UnderlineSeq (u1, codeTransformation u2 parid) )
+ | _ -> UnderlineAbort [Qvar "Place holder, to change later."]
+
+(* Place holder message: please Express Unitary as 
+    Product of 1qb or 2qb rotations, as that's the only
+    things that our rules allow. *)
 (* Then it's application of code tranformation rules. the rules
 should still be non-det to non-det, as the paper said.*)
 
 
+let test_p6 = 
+  (* let c0 = Init (Qvar "q0") in
+  let c1 = Init (Qvar "q1") in
+  let c2 = (Uapp (OneBRot ("X", ["theta_1"]), [Qvar "q0"])) in *)
+  let c3 = (Uapp (TwoBRot ("ZZ", ["theta_2"]), [Qvar "q0"; Qvar "q1"])) in
+  (* let c4 = Seq(Seq(c0, c1), Seq(c2, c3)) in *)
+  (* let ndprog = normalToNonDet (c4) in *)
+  let ndprog = normalToNonDet (c3) in
+  let papar = "theta_1" in 
+  codeTransformation ndprog papar
+
+let () =  
+  let c6 = test_p6 in 
+  let s6 = unparse_UnderlineCom c6 in
+  print_endline s6 
+
+let () =
+  let cnextline = "\r" in 
+  print_endline cnextline
 
   (* TODO: We need to be assign values to parameters,
      so need a function type assign: parid -> float: done.
@@ -401,3 +456,8 @@ should still be non-det to non-det, as the paper said.*)
      real values to the parameters in the parameterized unitary,
      and outputs an unparameterized unitary. The assignment is done
      in compliance with the "assign" function *)
+
+
+  (*Garbage code: match (List.mem parid t2) with
+    | true -> UnderlineAbort (List.append ql [Qvar "Place holder, change later."])
+    | false -> UnderlineAbort (List.append ql [Qvar "Place holder, change later."])*)
