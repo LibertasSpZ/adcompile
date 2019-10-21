@@ -503,9 +503,10 @@ let test_p6 =
   let c3 = (Uapp (TwoBRot ("ZZ", ["theta_2"]), [Qvar "q0"; Qvar "q1"])) in
   let c4 = Seq(Seq(c0, c1), Seq(c2, c3)) in 
   let ndprog = normalToNonDet (c4) in 
+  let ndprog2 = UnderlineBwhile (3, Qvar "qm", ndprog) in 
   (* let ndprog = normalToNonDet (c3) in *)
   let papar = "theta_1" in 
-  codeTransformation ndprog papar
+  codeTransformation ndprog2 papar
 
 let () =  
   let c6 = test_p6 in 
