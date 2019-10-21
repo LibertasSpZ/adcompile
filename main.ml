@@ -1,3 +1,6 @@
+(* open Core.Std *)
+
+
 type qid = string
 type uid = string
 
@@ -226,35 +229,35 @@ let rec unparse_UnderlineCom c : string =
   match c with
   | UnderlineAbort ql -> 
      let sql = unparse_qlist ql in
-     " ___ Abort[" ^ sql ^ "] ___ "
+     "Abort[" ^ sql ^ "]"
   | UnderlineSkip ql -> 
      let sql = unparse_qlist ql in
-      " ___ Skip[" ^ sql ^ "] ___ "
+      "Skip[" ^ sql ^ "]"
   | UnderlineInit q -> 
      let s = unparse_qbit q in 
-     " ___ " ^ s ^ ":=∣0⟩ ___ "
+     s ^ ":=∣0⟩"
   | UnderlineUapp (u, ql) -> 
      let su = unparse_UnderlineUnitary u in 
      let sql = unparse_qlist ql in 
-     " ___ " ^ sql ^ ":=" ^ su ^ "[" ^ sql ^ "] ___ "
+     sql ^ ":=" ^ su ^ "[" ^ sql ^ "]"
   | UnderlineSeq (c1, c2) ->
      let s1 = unparse_UnderlineCom c1 in
      let s2 = unparse_UnderlineCom c2 in
-     " ___ " ^ s1 ^ "; " ^ s2 ^ " ___ "
+     s1 ^ "; " ^ s2
   | UnderlineCase (qb, u1, u2) ->
      let q = unparse_qbit qb in
      let s1 = unparse_UnderlineCom u1 in
      let s2 = unparse_UnderlineCom u2 in
-     " ___ case M(" ^ q ^ ") = 0 then " ^ s1 ^ "else " ^ s2 ^ " ___ "
+     "case M(" ^ q ^ ") = 0 then " ^ s1 ^ "else " ^ s2
   | UnderlineBwhile (num, qb, u1) ->
      let nt = Printf.sprintf "%d" num in
      let q = unparse_qbit qb in
      let s1 = unparse_UnderlineCom u1 in
-     " ___ while^" ^ nt ^ " M(" ^ q ^ ")= 1 do " ^ s1 ^ " ___ "
+     "while^" ^ nt ^ " M(" ^ q ^ ")= 1 do " ^ s1
   | UnderlineAdd (u1, u2) -> 
      let s1 = unparse_UnderlineCom u1 in
      let s2 = unparse_UnderlineCom u2 in
-     "( ___ " ^ s1 ^ "+" ^ s2 ^ " ___ )"
+    s1 ^ "+" ^ s2
 
 (* Note that when printing we will have different lengths
  of the " ___ " lines and length correspond to the number
@@ -420,7 +423,16 @@ that rule in codeTransformation. *)
 
 
 (*To get the well-behaved BWhile code transformation rule one has to be
-able to compute the qlist of a command*)
+able to compute the qlist of a command. Helpers below: *)
+
+
+let rec appendWithoutDuplicate l1 l2 : qlist = 
+  match l2 with 
+  | [] -> l1 
+  | x :: l -> (match (List.mem x l1) with 
+    | false -> appendWithoutDuplicate (List.append l1 [x]) l
+    | true -> appendWithoutDuplicate l1 l
+  )
 
 let rec qListOfCom u : qlist =
   match u with 
@@ -433,38 +445,58 @@ let rec qListOfCom u : qlist =
   | UnderlineUapp (_, ql) -> 
      ql
   | UnderlineSeq (c1, c2) ->
-     List.append (qListOfCom c1) (qListOfCom c2) 
+     appendWithoutDuplicate (qListOfCom c1) (qListOfCom c2) 
   | UnderlineCase (qb, u1, u2) ->
-     List.append [qb] (List.append (qListOfCom u1) (qListOfCom u2)) 
+     appendWithoutDuplicate [qb] (appendWithoutDuplicate (qListOfCom u1) (qListOfCom u2)) 
   | UnderlineBwhile (_, qb, u1) ->
-     List.append [qb] (qListOfCom u1)
+     appendWithoutDuplicate [qb] (qListOfCom u1)
   | UnderlineAdd (u1, u2) -> 
-     List.append (qListOfCom u1) (qListOfCom u2) 
+     appendWithoutDuplicate (qListOfCom u1) (qListOfCom u2) 
+
+ let rec qListOfUnparCom u : qlist =
+  match u with 
+  | Abort ql -> 
+     ql
+  | Skip ql -> 
+     ql
+  | Init q -> 
+     [q]
+  | Uapp (_, ql) -> 
+     ql
+  | Seq (c1, c2) ->
+     appendWithoutDuplicate (qListOfUnparCom c1) (qListOfUnparCom c2) 
+  | Case (qb, u1, u2) ->
+     appendWithoutDuplicate [qb] (appendWithoutDuplicate (qListOfUnparCom u1) (qListOfUnparCom u2)) 
+  | Bwhile (_, qb, u1) ->
+     appendWithoutDuplicate [qb] (qListOfUnparCom u1)
+(*********
+Code Compilation below, p19.
+********)
 
 
 let rec codeTransformation u parid: underlineCom = 
 match u with
-| UnderlineAbort ql -> UnderlineAbort (List.append ql [Qvar "A"])
-| UnderlineSkip ql -> UnderlineAbort (List.append ql [Qvar "A"])
-| UnderlineInit q -> UnderlineAbort (List.append [q] [Qvar "A"]) 
+| UnderlineAbort ql -> UnderlineAbort (appendWithoutDuplicate ql [Qvar "A"])
+| UnderlineSkip ql -> UnderlineAbort (appendWithoutDuplicate ql [Qvar "A"])
+| UnderlineInit q -> UnderlineAbort (appendWithoutDuplicate [q] [Qvar "A"]) 
 | UnderlineUapp (uu, ql) -> (match uu with
   | UnderlineOneBRot (uuu, t) -> ( match (List.mem parid t) with 
     | true ->  UnderlineSeq(UnderlineSeq(UnderlineUapp(UnderlineGate("H",[""]),[Qvar "A"]),
-      UnderlineUapp(UnderlineGate("C-" ^ uuu,t), (List.append ql [Qvar "A"]))),
+      UnderlineUapp(UnderlineGate("C-" ^ uuu,t), (appendWithoutDuplicate ql [Qvar "A"]))),
       UnderlineUapp(UnderlineGate("H",[""]),[Qvar "A"])) 
-    | false -> UnderlineAbort (List.append ql [Qvar "A"]) )
+    | false -> UnderlineAbort (appendWithoutDuplicate ql [Qvar "A"]) )
   | UnderlineTwoBRot (uuu, t) -> ( match (List.mem parid t) with 
     | true -> UnderlineSeq(UnderlineSeq(UnderlineUapp(UnderlineGate("H",[""]),[Qvar "A"]),
-      UnderlineUapp(UnderlineGate("C-" ^ uuu,t), (List.append ql [Qvar "A"]))),
+      UnderlineUapp(UnderlineGate("C-" ^ uuu,t), (appendWithoutDuplicate ql [Qvar "A"]))),
       UnderlineUapp(UnderlineGate("H",[""]),[Qvar "A"]))
     (* nderlineUapp(UnderlineGate(uuu,t), (List.append ql [Qvar "Place holder 20, change later."]))*)
-    | false -> UnderlineAbort (List.append ql [Qvar "A"]) )(* UnderlineAbort (List.append ql [Qvar "Place holder 21, change later."]) *)
+    | false -> UnderlineAbort (appendWithoutDuplicate ql [Qvar "A"]) )(* UnderlineAbort (List.append ql [Qvar "Place holder 21, change later."]) *)
   (*_ -> UnderlineAbort (List.append ql [Qvar "Please only pass me Rotations."]) *) 
   (* ( match (List.mem parid t) with 
     | true -> UnderlineAbort (List.append ql [Qvar "Please only pass me Rotations."]) 
     (*UnderlineUapp(UnderlineGate(uuu,t), (List.append ql [Qvar "Place holder 00, change later."]))*)
     | false -> UnderlineAbort (List.append ql [Qvar "Please only pass me Rotations."]) ) *)
-  |_ -> UnderlineAbort (List.append ql [Qvar "Please only pass me Rotations."]) 
+  |_ -> UnderlineAbort (appendWithoutDuplicate ql [Qvar "Please only pass me Rotations."]) 
   )
  | UnderlineAdd (u1, u2) -> UnderlineAdd (codeTransformation u1 parid,
   codeTransformation u2 parid)
@@ -476,14 +508,14 @@ match u with
     | false -> (match (num = 0) with 
       | true -> UnderlineAbort ([Qvar "Error! Need T > 0."])
       | false -> codeTransformation
-        (UnderlineCase (qb, UnderlineSkip (List.append (qListOfCom u1) [Qvar "A"]),
+        (UnderlineCase (qb, UnderlineSkip (appendWithoutDuplicate (qListOfCom u1) [Qvar "A"]),
         UnderlineSeq (u1,
-          UnderlineAbort (List.append (qListOfCom u1) [Qvar "A"]))
+          UnderlineAbort (appendWithoutDuplicate (qListOfCom u1) [Qvar "A"]))
         )) parid
       )   
     (* Next, T >= 2*)
     | true -> codeTransformation 
-        (UnderlineCase (qb,UnderlineSkip (List.append (qListOfCom u1) [Qvar "A"]),
+        (UnderlineCase (qb,UnderlineSkip (appendWithoutDuplicate (qListOfCom u1) [Qvar "A"]),
         UnderlineSeq (u1, 
           UnderlineBwhile (num-1, qb, u1) )
         )) parid
@@ -496,7 +528,157 @@ match u with
 should still be non-det to non-det, as the paper said.*)
 
 
-let test_p6 = 
+
+
+  (* TODO: We need to be assign values to parameters,
+     so need a function type assign: parid -> float: done It's really
+     semantics so we commented it out.
+
+     We also need to define a function type mapping from parameterized
+     unitary to actual unitaries, i.e.
+     a function type that takes a (parameterized)unitary * assign, returns
+     unparameterized unitary. This function assigns
+     real values to the parameters in the parameterized unitary,
+     and outputs an unparameterized unitary. The assignment is done
+     in compliance with the "assign" function *)
+
+
+
+(* For the Compilation rules let's just use list to represent multiset, since
+we don't care about order and we throw unnecessary aborts away on the go.*)
+
+(*** Compilation rules: Fig 5, p14 ***)
+
+
+
+(* A helper. e.g. returnConcat {|U1, U2|} {|U3, U3|} = {|U1U3, U1U3, 
+U2U3, U2U3|} *)
+
+
+let rec returnConcat l1 l2 : com list =
+  match l1 with 
+  | [] -> []
+  | x :: l -> (match l2 with
+    | [] -> []
+    | x' :: l' -> List.append 
+    (List.append [Seq(x, x')] (returnConcat [x] l'))
+    (List.append (returnConcat l [x']) (returnConcat l l'))
+  )
+
+
+
+(*** let addAbort times l  : list com = 
+  let l0 =  [] in
+  let counter = 1 in 
+  let () = in 
+  while counter <= times do l0 = List.append l0 [Abort (qListOfUnparCom (List.hd l2)) ]; 
+  counter = counter + 1 done  ***)
+  
+(* Another helper: Takes C1 C2 two lists of regular commands, returns
+  a filled list. If no need to fill, return C2. 
+*)
+
+let fillUp l1 l2 : com list =
+  let diff = (List.length l1) - (List.length l2) in 
+  (match (diff > 0) with
+  | true -> let produceAbort (n : int) : com = 
+            (match n with 
+            | _ -> Abort (qListOfUnparCom (List.hd l2))
+            ) in 
+            let op = List.init diff produceAbort in 
+            List. append l2 op
+  | false -> (match (diff = 0) with 
+    |false  -> let produceAbort (n : int) : com = 
+            (match n with 
+            | _ -> Abort (qListOfUnparCom (List.hd l1))
+            ) in 
+              let op = List.init ((List.length l2) - (List.length l1)) produceAbort in 
+            List. append l1 op
+    |true -> l2 
+    )
+  )
+
+(* take two lists of same length, return a set of cases with same length *)
+let rec createIf qb l1 l2 : com list = 
+  match l1 with 
+  | [] -> (match l2 with 
+    | [] -> []
+    | _ :: _ -> [Abort ([Qvar "Lists of diff length!"])]
+  )
+  | x::l -> ( match l2 with 
+    | [] -> [Abort ([Qvar "Lists of diff length!"])]
+    | x' :: l' -> List.append [Case (qb, x, x')] (createIf qb l l')
+  )
+
+
+  (* List.append [Case (qb, l1.hd, l2.hd)] (recCreateIf qb l1.) *)
+
+let rec codeCompilation u : com list =
+  match  u with
+  | UnderlineAbort ql -> [Abort ql]
+  | UnderlineSkip ql -> [Skip ql]
+  | UnderlineInit q -> [Init q]
+  | UnderlineUapp (u, ql) -> (match u with
+    | UnderlineGate (uu, par) -> [Uapp (Gate (uu, par), ql)]
+    | UnderlineOneBRot (uu, par) -> [Uapp (OneBRot (uu, par),ql)]
+    | UnderlineTwoBRot (uu, par) -> [Uapp (TwoBRot (uu, par),ql)]
+  )
+  | UnderlineSeq (u1, u2) -> ( match (codeCompilation u1 = [Abort (qListOfCom u1)])
+  with 
+    | false -> (match (codeCompilation u2 = [Abort (qListOfCom u2)])
+  with 
+      |false -> returnConcat (codeCompilation u1) (codeCompilation u2)
+      |true -> [Abort (qListOfCom u)]
+    )
+    | true -> [Abort (qListOfCom u)]
+  )
+  | UnderlineAdd (u1, u2) -> ( match (codeCompilation u1 = [Abort (qListOfCom u1)])
+  with 
+    | false -> (match (codeCompilation u2 = [Abort (qListOfCom u2)]) with 
+      |false -> List.append (codeCompilation u1) (codeCompilation u2)
+      |true -> codeCompilation u1
+    )
+    | true -> (match (codeCompilation u2 = [Abort (qListOfCom u2)])
+  with 
+      |false -> codeCompilation u2
+      |true -> [Abort (qListOfCom u)]
+    )
+  )
+ 
+ | UnderlineCase (qb, u1, u2) -> let l1 = codeCompilation u1 in 
+                                 let l2 = codeCompilation u2 in 
+                                 let diff = List.length l1 - List.length l2 in 
+                                 (match (diff > 0) with 
+                                  | true -> let filled2 = fillUp l1 l2 in 
+                                            createIf qb l1 filled2
+                                  | false -> (match (diff = 0) with
+                                    |false -> let filled1 = fillUp l1 l2 in 
+                                            createIf qb filled1 l2
+                                    |true -> createIf qb l1 l2
+                                  )
+
+ )
+ (* UnderlineCase (qb, codeTransformation u1 parid, 
+ codeTransformation u2 parid) *)
+ | UnderlineBwhile (num, qb, u1) -> (match (num > 1) with 
+    | false -> (match (num = 0) with 
+      | true -> [Abort ([Qvar "Error! Need T > 0."])]
+      | false -> codeCompilation
+        (UnderlineCase (qb, UnderlineSkip (qListOfCom u1),
+        UnderlineSeq (u1,
+          UnderlineAbort (qListOfCom u1) )
+        )) 
+      )   
+    (* Next, T >= 2*)
+    | true -> codeCompilation
+        (UnderlineCase (qb,UnderlineSkip (qListOfCom u1) ,
+        UnderlineSeq (u1, 
+          UnderlineBwhile (num-1, qb, u1) )
+        )) 
+    ) 
+
+
+let test_p7 = 
   let c0 = Init (Qvar "q0") in
   let c1 = Init (Qvar "q1") in
   let c2 = (Uapp (OneBRot ("X", ["theta_1"]), [Qvar "q0"])) in 
@@ -506,27 +688,26 @@ let test_p6 =
   let ndprog2 = UnderlineBwhile (3, Qvar "qm", ndprog) in 
   (* let ndprog = normalToNonDet (c3) in *)
   let papar = "theta_1" in 
-  codeTransformation ndprog2 papar
+  let daoChengXu = codeTransformation ndprog2 papar in 
+  (* let opDaoChengXU = *) codeCompilation daoChengXu
 
-let () =  
-  let c6 = test_p6 in 
+ let rec printList li =
+ match li with 
+ | [] -> let cnextline = "\r End of printing \r" in 
+                 print_endline cnextline
+ | x :: l' -> let cnextline = "\r" in 
+             let s6 = unparse_com x in
+             print_endline s6 ; print_endline cnextline; printList l'
+ let () =  printList test_p7 (* match (List.length opDaoChengXU > 0) with
+  | false -> let cnextline = "WTF, empty set of progs?\r" in 
+                 print_endline cnextline
+  let c6 = test_p7 in 
   let s6 = unparse_UnderlineCom c6 in
-  print_endline s6 
+  print_endline s6 *)
 
 let () =
   let cnextline = "\r" in 
   print_endline cnextline
-
-  (* TODO: We need to be assign values to parameters,
-     so need a function type assign: parid -> float: done.
-
-     We also need to define a function type mapping from parameterized
-     unitary to actual unitaries, i.e.
-     a function type that takes a (parameterized)unitary * assign, returns
-     unparameterized unitary. This function assigns
-     real values to the parameters in the parameterized unitary,
-     and outputs an unparameterized unitary. The assignment is done
-     in compliance with the "assign" function *)
 
 
   (*Garbage code: match (List.mem parid t2) with
