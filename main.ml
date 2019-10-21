@@ -16,9 +16,9 @@ type par = parid list
 
 type evaledparid = float
 type evaledpar = evaledparid list
-type evalpar = par -> evaledpar
+(* type evalpar = par -> evaledpar *)
 (* evaluating a list of parameters, e.g: (theta_1,theta_2)\mapsto
-(0,5,0.7)  *)
+(0,5,0.7) . Semantics. No need yet. *)
 
 
 
@@ -254,7 +254,7 @@ let rec unparse_UnderlineCom c : string =
   | UnderlineAdd (u1, u2) -> 
      let s1 = unparse_UnderlineCom u1 in
      let s2 = unparse_UnderlineCom u2 in
-     " ___ " ^ s1 ^ "+" ^ s2 ^ " ___ "
+     "( ___ " ^ s1 ^ "+" ^ s2 ^ " ___ )"
 
 (* Note that when printing we will have different lengths
  of the " ___ " lines and length correspond to the number
@@ -391,11 +391,56 @@ let () =
 
 ***)
 
-let codeTransformationUnitary uuu parid: underlineUnitary =
-	UnderlineGate (uuu, [parid])
+(* TODO: abstractly define controled unitary and its unparse;
+then one can compose them to make the thing work!
 
+That's symantics. We ignore that as of now *)
+(* type cRot = 
+|ControledRot of uid * par * qlist -> underlineCom 
+
+
+let test_p7 =
+ControledRot (X ["theta_1"] ["Ancilla"]) 
+
+let () =  
+  let c7 = test_p7 in 
+  let s7 = unparse_UnderlineCom c7 in
+  print_endline s7 *)
+
+(* let rotationConvertToControlled (uuu: uid) (t: par) (ql: qlist) : underlineCom = *)
+
+(* let codeTransformationUnitary uuu t qli: underlineCom = *)
+
+
+(* We do syntactical transformation so we only need to explicitly write 
+the control as some string without having to introduce the concept of
+tensor (as well as the linear algebra underneath. Still needs some work. *)
 (* Still TODO: define unitary differentiation rule first, then use 
 that rule in codeTransformation. *)
+
+
+(*To get the well-behaved BWhile code transformation rule one has to be
+able to compute the qlist of a command*)
+
+let rec qListOfCom u : qlist =
+  match u with 
+  | UnderlineAbort ql -> 
+     ql
+  | UnderlineSkip ql -> 
+     ql
+  | UnderlineInit q -> 
+     [q]
+  | UnderlineUapp (_, ql) -> 
+     ql
+  | UnderlineSeq (c1, c2) ->
+     List.append (qListOfCom c1) (qListOfCom c2) 
+  | UnderlineCase (qb, u1, u2) ->
+     List.append [qb] (List.append (qListOfCom u1) (qListOfCom u2)) 
+  | UnderlineBwhile (_, qb, u1) ->
+     List.append [qb] (qListOfCom u1)
+  | UnderlineAdd (u1, u2) -> 
+     List.append (qListOfCom u1) (qListOfCom u2) 
+
 
 let rec codeTransformation u parid: underlineCom = 
 match u with
@@ -403,22 +448,47 @@ match u with
 | UnderlineSkip ql -> UnderlineAbort (List.append ql [Qvar "A"])
 | UnderlineInit q -> UnderlineAbort (List.append [q] [Qvar "A"]) 
 | UnderlineUapp (uu, ql) -> (match uu with
-  | UnderlineGate (uuu, t) -> ( match (List.mem parid t) with 
-    | true -> UnderlineUapp(UnderlineGate(uuu,t), (List.append ql [Qvar "Place holder 00, change later."]))
-    | false -> UnderlineAbort (List.append ql [Qvar "Place holder 01, change later."]) )
   | UnderlineOneBRot (uuu, t) -> ( match (List.mem parid t) with 
-    | true -> UnderlineUapp(UnderlineGate(uuu,t), (List.append ql [Qvar "Place holder 10, change later."]))
-    | false -> UnderlineAbort (List.append ql [Qvar "Place holder 11, change later."]) )
+    | true ->  UnderlineSeq(UnderlineSeq(UnderlineUapp(UnderlineGate("H",[""]),[Qvar "A"]),
+      UnderlineUapp(UnderlineGate("C-" ^ uuu,t), (List.append ql [Qvar "A"]))),
+      UnderlineUapp(UnderlineGate("H",[""]),[Qvar "A"])) 
+    | false -> UnderlineAbort (List.append ql [Qvar "A"]) )
   | UnderlineTwoBRot (uuu, t) -> ( match (List.mem parid t) with 
-    | true -> UnderlineUapp(UnderlineGate(uuu,t), (List.append ql [Qvar "Place holder 20, change later."]))
-    | false -> UnderlineAbort (List.append ql [Qvar "Place holder 21, change later."]) )
+    | true -> UnderlineSeq(UnderlineSeq(UnderlineUapp(UnderlineGate("H",[""]),[Qvar "A"]),
+      UnderlineUapp(UnderlineGate("C-" ^ uuu,t), (List.append ql [Qvar "A"]))),
+      UnderlineUapp(UnderlineGate("H",[""]),[Qvar "A"]))
+    (* nderlineUapp(UnderlineGate(uuu,t), (List.append ql [Qvar "Place holder 20, change later."]))*)
+    | false -> UnderlineAbort (List.append ql [Qvar "A"]) )(* UnderlineAbort (List.append ql [Qvar "Place holder 21, change later."]) *)
+  (*_ -> UnderlineAbort (List.append ql [Qvar "Please only pass me Rotations."]) *) 
+  (* ( match (List.mem parid t) with 
+    | true -> UnderlineAbort (List.append ql [Qvar "Please only pass me Rotations."]) 
+    (*UnderlineUapp(UnderlineGate(uuu,t), (List.append ql [Qvar "Place holder 00, change later."]))*)
+    | false -> UnderlineAbort (List.append ql [Qvar "Please only pass me Rotations."]) ) *)
+  |_ -> UnderlineAbort (List.append ql [Qvar "Please only pass me Rotations."]) 
   )
  | UnderlineAdd (u1, u2) -> UnderlineAdd (codeTransformation u1 parid,
   codeTransformation u2 parid)
  | UnderlineSeq (u1, u2) -> UnderlineAdd (UnderlineSeq (codeTransformation u1 parid,
  u2), UnderlineSeq (u1, codeTransformation u2 parid) )
- | _ -> UnderlineAbort [Qvar "Place holder, to change later."]
-
+ | UnderlineCase (qb, u1, u2) -> UnderlineCase (qb, codeTransformation u1 parid, 
+ codeTransformation u2 parid)
+ | UnderlineBwhile (num, qb, u1) -> (match (num > 1) with 
+    | false -> (match (num = 0) with 
+      | true -> UnderlineAbort ([Qvar "Error! Need T > 0."])
+      | false -> codeTransformation
+        (UnderlineCase (qb, UnderlineSkip (List.append (qListOfCom u1) [Qvar "A"]),
+        UnderlineSeq (u1,
+          UnderlineAbort (List.append (qListOfCom u1) [Qvar "A"]))
+        )) parid
+      )   
+    (* Next, T >= 2*)
+    | true -> codeTransformation 
+        (UnderlineCase (qb,UnderlineSkip (List.append (qListOfCom u1) [Qvar "A"]),
+        UnderlineSeq (u1, 
+          UnderlineBwhile (num-1, qb, u1) )
+        )) parid
+    ) 
+ (* | _ -> UnderlineAbort ([Qvar "Place holder, fill later."]) *)
 (* Place holder message: please Express Unitary as 
     Product of 1qb or 2qb rotations, as that's the only
     things that our rules allow. *)
