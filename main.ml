@@ -272,7 +272,9 @@ test_p4 for parameterized non-det (\S 5.1) *)
   let c2 = (Uapp (Gate ("H", ["theta"]), [Qvar "q0"])) in
   Seq(Seq(c1, c2), c2)  *)
 
-let test_p2 =
+(***  p2 - p4: Small Test Cases for syntax sanity check  ***)
+(*** 
+  let test_p2 =
   let c0 = Init (Qvar "q0") in
   let c1 = Init (Qvar "q1") in
   let c2 = (Uapp (Gate ("H", ["theta_1"]), [Qvar "q0"])) in
@@ -282,13 +284,7 @@ let test_p2 =
   Bwhile (2, guard, c4)     
  
   
-(* let () =
-  let c = test_p2 in
-  (* let c = Skip in  *)
-  let s = unparse_com c in
-  print_endline s
 
-Printf.sprintf "\r" *)
 
 let test_p3 =
   let c0 = UNInit (Qvar "q0") in
@@ -300,13 +296,6 @@ let test_p3 =
   let guard = Qvar "q3" in 
   UNCase (guard, c4, c5)
 
-  (* let () =
-  let c = test_p3 in
-  (* let c = Skip in  *)
-  let s = unparse_UNcom c in
-  print_endline s
-
-Printf.sprintf "\r"  *)
 
 let test_p4 =
   let c0 = UnderlineInit (Qvar "q0") in
@@ -345,8 +334,10 @@ let test_p4 =
   let cnextline = "\r" in 
   print_endline cnextline
 
+  ***)
 
-(* Code Transformation Rules (Figure 6) *)
+
+(***** Code Transformation Rules (Figure 6) *****)
 
 
 (* First, given any normal parameterized program, we view it
@@ -375,6 +366,10 @@ let rec normalToNonDet u : underlineCom =
      UnderlineBwhile(num, qb, normalToNonDet u1)
 
 
+(*** Test case p5: checking the "inclusion rule" for converting det parameterized
+progs to non-det. ***)
+
+(***
 let test_p5 =
   let c0 = Init (Qvar "q0") in
   let c1 = Init (Qvar "q1") in
@@ -394,7 +389,12 @@ let () =
   let cnextline = "\r" in 
   print_endline cnextline
 
-(* TODO TODO: define unitary differentiation rule first, then use 
+***)
+
+let codeTransformationUnitary uuu parid: underlineUnitary =
+	UnderlineGate (uuu, [parid])
+
+(* Still TODO: define unitary differentiation rule first, then use 
 that rule in codeTransformation. *)
 
 let rec codeTransformation u parid: underlineCom = 
@@ -427,13 +427,13 @@ should still be non-det to non-det, as the paper said.*)
 
 
 let test_p6 = 
-  (* let c0 = Init (Qvar "q0") in
+  let c0 = Init (Qvar "q0") in
   let c1 = Init (Qvar "q1") in
-  let c2 = (Uapp (OneBRot ("X", ["theta_1"]), [Qvar "q0"])) in *)
+  let c2 = (Uapp (OneBRot ("X", ["theta_1"]), [Qvar "q0"])) in 
   let c3 = (Uapp (TwoBRot ("ZZ", ["theta_2"]), [Qvar "q0"; Qvar "q1"])) in
-  (* let c4 = Seq(Seq(c0, c1), Seq(c2, c3)) in *)
-  (* let ndprog = normalToNonDet (c4) in *)
-  let ndprog = normalToNonDet (c3) in
+  let c4 = Seq(Seq(c0, c1), Seq(c2, c3)) in 
+  let ndprog = normalToNonDet (c4) in 
+  (* let ndprog = normalToNonDet (c3) in *)
   let papar = "theta_1" in 
   codeTransformation ndprog papar
 
