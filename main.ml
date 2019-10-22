@@ -104,17 +104,17 @@ let rec unparse_com c : string =
   | Seq (c1, c2) ->
      let s1 = unparse_com c1 in
      let s2 = unparse_com c2 in
-     s1 ^ "; " ^ s2
+     s1 ^ "; \r" ^ s2
   | Case (qb, u1, u2) ->
      let q = unparse_qbit qb in
      let s1 = unparse_com u1 in
      let s2 = unparse_com u2 in
-     "case M(" ^ q ^ ") = 0 then " ^ s1 ^ "else " ^ s2
+     "case M(" ^ q ^ ") = 0 then \r" ^ s1 ^ "\relse\r" ^ s2 ^ "\rend"
   | Bwhile (num, qb, u1) ->
      let nt = Printf.sprintf "%d" num in
      let q = unparse_qbit qb in
      let s1 = unparse_com u1 in
-     "while^" ^ nt ^ " M(" ^ q ^ ")= 1 do " ^ s1   
+     "while^" ^ nt ^ " M(" ^ q ^ ")= 1 do " ^ s1 ^ "\r od"  
 (* endof syntax for parameterized progs (\S 4.1) *)
 
 
@@ -176,17 +176,17 @@ let rec unparse_UNcom c : string =
   | UNSeq (c1, c2) ->
      let s1 = unparse_UNcom c1 in
      let s2 = unparse_UNcom c2 in
-     s1 ^ "; " ^ s2
+     s1 ^ "; \r" ^ s2
   | UNCase (qb, u1, u2) ->
      let q = unparse_qbit qb in
      let s1 = unparse_UNcom u1 in
      let s2 = unparse_UNcom u2 in
-     "case M(" ^ q ^ ") = 0 then " ^ s1 ^ "else " ^ s2
+     "case M(" ^ q ^ ") = 0 then \r" ^ s1 ^ "\relse\r" ^ s2 ^ "\rend"
   | UNBwhile (num, qb, u1) ->
      let nt = Printf.sprintf "%d" num in
      let q = unparse_qbit qb in
      let s1 = unparse_UNcom u1 in
-     "while^" ^ nt ^ " M(" ^ q ^ ")= 1 do " ^ s1   
+     "while^" ^ nt ^ " M(" ^ q ^ ")= 1 do " ^ s1 ^ "\r od"
 (* endof syntax for UNparameterized progs (\S 3.1) *)
 
 
@@ -243,17 +243,17 @@ let rec unparse_UnderlineCom c : string =
   | UnderlineSeq (c1, c2) ->
      let s1 = unparse_UnderlineCom c1 in
      let s2 = unparse_UnderlineCom c2 in
-     s1 ^ "; " ^ s2
+     s1 ^ "; \r" ^ s2
   | UnderlineCase (qb, u1, u2) ->
      let q = unparse_qbit qb in
      let s1 = unparse_UnderlineCom u1 in
      let s2 = unparse_UnderlineCom u2 in
-     "case M(" ^ q ^ ") = 0 then " ^ s1 ^ "else " ^ s2
+     "case M(" ^ q ^ ") = 0 then \r" ^ s1 ^ "\relse\r" ^ s2 ^ "\rend"
   | UnderlineBwhile (num, qb, u1) ->
      let nt = Printf.sprintf "%d" num in
      let q = unparse_qbit qb in
      let s1 = unparse_UnderlineCom u1 in
-     "while^" ^ nt ^ " M(" ^ q ^ ")= 1 do " ^ s1
+     "while^" ^ nt ^ " M(" ^ q ^ ")= 1 do " ^ s1 ^ "\r od"
   | UnderlineAdd (u1, u2) -> 
      let s1 = unparse_UnderlineCom u1 in
      let s2 = unparse_UnderlineCom u2 in
@@ -704,6 +704,8 @@ let test_p7 =
  | x :: l' -> let cnextline = "\r" in 
              let s6 = unparse_com x in
              print_endline s6 ; print_endline cnextline; printList l'
+
+
  let () =  printList test_p7 (* match (List.length opDaoChengXU > 0) with
   | false -> let cnextline = "WTF, empty set of progs?\r" in 
                  print_endline cnextline
@@ -715,6 +717,54 @@ let () =
   let cnextline = "\r" in 
   print_endline cnextline
 
+
+let test_p8 = 
+  let c0 = Init (Qvar "q0") in
+  let c1 = Init (Qvar "q1") in
+  let c2 = (Uapp (OneBRot ("X", ["theta_1"]), [Qvar "q0"])) in 
+  let c3 = (Uapp (TwoBRot ("ZZ", ["theta_2"]), [Qvar "q0"; Qvar "q1"])) in
+  let c4 = Seq(Seq(c0, c1), Seq(c2, c3)) in 
+  let ndprog = normalToNonDet (c4) in 
+  let papar = "theta_2" in 
+  let daoChengXu = codeTransformation ndprog papar in 
+  (* let opDaoChengXU = *) codeCompilation daoChengXu
+
+let () =  printList test_p8 (* match (List.length opDaoChengXU > 0) with
+  | false -> let cnextline = "WTF, empty set of progs?\r" in 
+                 print_endline cnextline
+  let c6 = test_p7 in 
+  let s6 = unparse_UnderlineCom c6 in
+  print_endline s6 *)
+
+let () =
+  let cnextline = "\r" in 
+  print_endline cnextline
+
+
+
+let test_p9 = 
+  let c0 = Init (Qvar "q0") in
+  let c1 = Init (Qvar "q1") in
+  let c2 = (Uapp (OneBRot ("X", ["theta_1"]), [Qvar "q0"])) in 
+  let c3 = (Uapp (TwoBRot ("ZZ", ["theta_2"]), [Qvar "q0"; Qvar "q1"])) in
+  let c4 = Seq(Seq(c0, c1), Seq(c2, c3)) in 
+  let ndprog = normalToNonDet (c4) in 
+  let ndprog2 = normalToNonDet (c2) in 
+  let ndprog3 = UnderlineCase (Qvar "qm", ndprog, ndprog2) in 
+  let papar = "theta_2" in 
+  let daoChengXu = codeTransformation ndprog3 papar in 
+  (* let opDaoChengXU = *) codeCompilation daoChengXu
+
+let () =  printList test_p9 (* match (List.length opDaoChengXU > 0) with
+  | false -> let cnextline = "WTF, empty set of progs?\r" in 
+                 print_endline cnextline
+  let c6 = test_p7 in 
+  let s6 = unparse_UnderlineCom c6 in
+  print_endline s6 *)
+
+let () =
+  let cnextline = "\r" in 
+  print_endline cnextline
 
   (*Garbage code: match (List.mem parid t2) with
     | true -> UnderlineAbort (List.append ql [Qvar "Place holder, change later."])
