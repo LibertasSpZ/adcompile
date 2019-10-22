@@ -651,10 +651,16 @@ let rec codeCompilation u : com list =
                                  (match (diff > 0) with 
                                   | true -> let filled2 = fillUp l1 l2 in 
                                             createIf qb l1 filled2
+                                  
                                   | false -> (match (diff = 0) with
-                                    |false -> let filled1 = fillUp l1 l2 in 
+                                    | false -> let filled1 = fillUp l1 l2 in 
                                             createIf qb filled1 l2
-                                    |true -> createIf qb l1 l2
+                                    | true -> (match ( (l1 = [Abort (qListOfUnparCom (List.hd l1))]) && 
+                                      (l2 = [Abort (qListOfUnparCom (List.hd l2))]) ) with
+                                      | true -> [Abort (appendWithoutDuplicate (appendWithoutDuplicate [qb] (qListOfUnparCom (List.hd l1))) 
+                                        (qListOfUnparCom (List.hd l1)))]
+                                      | _ -> createIf qb l1 l2
+                                    )       
                                   )
 
  )
