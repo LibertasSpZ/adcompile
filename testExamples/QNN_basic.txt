@@ -1,0 +1,14 @@
+q_1 := Z(@theta_1)[q_1];
+q_2 := Z(@theta_2)[q_2];
+q_3 := Z(@theta_3)[q_3];
+q_4 := Z(@theta_4)[q_4];
+
+q_1,q_2 := XX(@theta_5)[q_1,q_2];
+q_1,q_3 := XX(@theta_6)[q_1,q_3];
+q_1,q_4 := XX(@theta_7)[q_1,q_4]
+
+
+
+
+
+

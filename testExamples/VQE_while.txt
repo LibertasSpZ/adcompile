@@ -1,0 +1,21 @@
+while^2 M[q_m] = 1 do 
+
+	q_1 := |0>;
+	q_2 := |0>;
+	q_1 := X(@alpha_0)[q_1];
+	q_2 := X(@alpha_1)[q_2];
+	q_1 := Z(@beta_0)[q_1];
+	q_2 := Z(@beta_1)[q_2];
+
+	q_1 := H[q_1];
+	q_1,q_2 := CNOT[q_1,q_2];
+	q_2 := H[q_1];
+	q_2,q_1 := CNOT[q_2,q_1];
+	
+	q_1 := Z(@gamma_0)[q_1];
+	q_2 := Z((@gamma_1)[q_2];
+	q_1 := X(@delta_0)[q_1];
+	q_2 := X(@delta_1)[q_2];
+	q_1 := Z(@epsilon_0)[q_1];
+	q_2 := Z(@epsilon_1)[q_2]
+od

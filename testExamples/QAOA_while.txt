@@ -1,0 +1,17 @@
+while^3 M[q_m]=1 do
+	q_1,q_2:= CNOT[q_1,q_2];
+	q_2 = Z(@gamma_1)[q_2];
+	q_1,q_2:= CNOT[q_1,q_2];
+
+	q_2,q_3:= CNOT[q_2,q_3];
+	q_3 = Z(@gamma_2)[q_3];
+	q_2,q_3:= CNOT[q_2,q_3];
+
+	q_3,q_1:= CNOT[q_3,q_1];
+	q_1 = Z(@gamma_3)[q_1];
+	q_3,q_1:= CNOT[q_3,q_1];
+
+	q_1 := X(@beta_1)[q_1];
+	q_2 := X(@beta_2)[q_2];
+	q_3 := X(@beta_3)[q_3]
+od

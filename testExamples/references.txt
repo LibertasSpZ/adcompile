@@ -1,0 +1,7 @@
+Refs:
+
+VQE:https://www.youtube.com/watch?v=E947xs9-Mso
+
+QAOA:https://www.cs.umd.edu/class/fall2018/cmsc657/index.html
+
+QNN:manuscript.
