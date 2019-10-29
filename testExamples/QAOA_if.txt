@@ -1,33 +1,33 @@
-case M[q_m] = 0 then
-	q_1,q_2:= CNOT[q_1,q_2];
-	q_2 = Z(@gamma_1)[q_2];
-	q_1,q_2:= CNOT[q_1,q_2];
+case M[q0] = 0 then
+	q1,q2:= CNOT()[q1,q2];
+	q2 := Z(gamma1)[q2];
+	q1,q2:= CNOT()[q1,q2];
 
-	q_2,q_3:= CNOT[q_2,q_3];
-	q_3 = Z(@gamma_2)[q_3];
-	q_2,q_3:= CNOT[q_2,q_3];
+	q2,q3:= CNOT()[q2,q3];
+	q3 := Z(gamma2)[q3];
+	q2,q3:= CNOT()[q2,q3];
 
-	q_3,q_1:= CNOT[q_3,q_1];
-	q_1 = Z(@gamma_3)[q_1];
-	q_3,q_1:= CNOT[q_3,q_1];
+	q3,q1:= CNOT()[q3,q1];
+	q1 := Z(gamma3)[q1];
+	q3,q1:= CNOT()[q3,q1];
 
-	q_1 := X(@beta_1)[q_1];
-	q_2 := X(@beta_2)[q_2];
-	q_3 := X(@beta_3)[q_3]
+	q1 := X(beta1)[q1];
+	q2 := X(beta2)[q2];
+	q3 := X(beta3)[q3]
 else
-	q_1,q_2:= CNOT[q_1,q_2];
-	q_2 = Z(@gamma_1)[q_2];
-	q_1,q_2:= CNOT[q_1,q_2];
+	q1,q2:= CNOT()[q1,q2];
+	q2 := Z(gamma1)[q2];
+	q1,q2:= CNOT()[q1,q2];
 
-	q_2,q_3:= CNOT[q_2,q_3];
-	q_3 = Z(@gamma_1)[q_3];
-	q_2,q_3:= CNOT[q_2,q_3];
+	q2,q3:= CNOT()[q2,q3];
+	q3 := Z(gamma1)[q3];
+	q2,q3:= CNOT()[q2,q3];
 
-	q_3,q_1:= CNOT[q_3,q_1];
-	q_1 = Z(@gamma_1)[q_1];
-	q_3,q_1:= CNOT[q_3,q_1];
+	q3,q1:= CNOT()[q3,q1];
+	q1 := Z(gamma1)[q1];
+	q3,q1:= CNOT()[q3,q1];
 
-	q_1 := X(@beta_1)[q_1];
-	q_2 := X(@beta_1)[q_2];
-	q_3 := X(@beta_1)[q_3]
+	q1 := X(beta1)[q1];
+	q2 := X(beta1)[q2];
+	q3 := X(beta1)[q3]
 end

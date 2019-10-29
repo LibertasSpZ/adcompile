@@ -1,11 +1,11 @@
-q_1 := Z(@theta_1)[q_1];
-q_2 := Z(@theta_2)[q_2];
-q_3 := Z(@theta_3)[q_3];
-q_4 := Z(@theta_4)[q_4];
+q1 := Z(theta1)[q1];
+q2 := Z(theta2)[q2];
+q3 := Z(theta3)[q3];
+q4 := Z(theta4)[q4];
 
-q_1,q_2 := XX(@theta_5)[q_1,q_2];
-q_1,q_3 := XX(@theta_6)[q_1,q_3];
-q_1,q_4 := XX(@theta_7)[q_1,q_4]
+q1,q2 := XX(theta5)[q1,q2];
+q1,q3 := XX(theta6)[q1,q3];
+q1,q4 := XX(theta7)[q1,q4]
 
 
 

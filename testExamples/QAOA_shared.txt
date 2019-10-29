@@ -1,15 +1,15 @@
-q_1,q_2:= CNOT[q_1,q_2];
-q_2 = Z(@gamma)[q_2];
-q_1,q_2:= CNOT[q_1,q_2];
+q1,q2:= CNOT()[q1,q2];
+q2 := Z(gamma1)[q2];
+q1,q2:= CNOT()[q1,q2];
 
-q_2,q_3:= CNOT[q_2,q_3];
-q_3 = Z(@gamma)[q_3];
-q_2,q_3:= CNOT[q_2,q_3];
+q2,q3:= CNOT()[q2,q3];
+q3 := Z(gamma1)[q3];
+q2,q3:= CNOT()[q2,q3];
 
-q_3,q_1:= CNOT[q_3,q_1];
-q_1 = Z(@gamma)[q_1];
-q_3,q_1:= CNOT[q_3,q_1];
+q3,q1:= CNOT()[q3,q1];
+q1 := Z(gamma1)[q1];
+q3,q1:= CNOT()[q3,q1];
 
-q_1 := X(@beta)[q_1];
-q_2 := X(@beta)[q_2];
-q_3 := X(@beta)[q_3]
+q1 := X(beta1)[q1];
+q2 := X(beta1)[q2];
+q3 := X(beta1)[q3]
