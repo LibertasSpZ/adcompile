@@ -3,10 +3,14 @@
 %}
 
 %token LB RB
+%token LBC RBC
+%token LBS RBS
 %token CMA SCN
 %token ABORT SKIP
 %token Q
+%token PARA
 %token <int> ID
+
 %token EOF
 
 %start program
@@ -24,8 +28,8 @@ ops :
 ;
 
 op :
-| ABORT LB qbs RB { Abort $3 }
-| SKIP LB qbs RB { Skip $3 }
+| ABORT LBC parsl RBC LB qbs RB { Abort ($3, $6) }
+| SKIP LBC parsl RBC LB qbs RB { Skip ($3, $6) }
 ;
 
 qbs :
@@ -36,4 +40,15 @@ qbs :
 qb :
 | Q ID { Q $2 }
 ;
+
+
+parsl :
+| pars { [ $1 ] }
+| pars CMA parsl { $1 :: $3 }
+;
+
+pars :
+| PARA ID { PARA $2 }
+;
+
 
