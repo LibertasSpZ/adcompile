@@ -1,4 +1,4 @@
 
-abort(t0)[q1,q2,q3];
+abort()[q1,q2,q3];
 skip(t0)[q1,q2,q3]
 

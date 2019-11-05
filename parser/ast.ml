@@ -5,14 +5,14 @@ type parid = int
 type qb = 
 | Q of id
 
-type pars = 
-| PARA of parid
+type par = 
+| T of parid
 
 type qbl = qb list
-type parsl = pars list
+type parl = par list
 
 type op = 
-| Abort of parsl * qbl
-| Skip of parsl * qbl
+| Abort of parl * qbl
+| Skip of parl * qbl
 
 type program = op list

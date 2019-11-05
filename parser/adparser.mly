@@ -7,8 +7,7 @@
 %token LBS RBS
 %token CMA SCN
 %token ABORT SKIP
-%token Q
-%token PARA
+%token Q T
 %token <int> ID
 
 %token EOF
@@ -28,27 +27,33 @@ ops :
 ;
 
 op :
-| ABORT LBC parsl RBC LB qbs RB { Abort ($3, $6) }
-| SKIP LBC parsl RBC LB qbs RB { Skip ($3, $6) }
+| ABORT pars qbs { Abort ($2, $3) }
+| SKIP pars qbs { Skip ($2, $3) }
 ;
 
 qbs :
+| LB qbl RB { $2 }
+
+qbl :
 | qb { [ $1 ] }
-| qb CMA qbs { $1 :: $3 }
+| qb CMA qbl { $1 :: $3 }
 ;
 
 qb :
 | Q ID { Q $2 }
 ;
 
+pars :
+| LBC RBC { [] }
+| LBC parl RBC { $2 }
 
-parsl :
-| pars { [ $1 ] }
-| pars CMA parsl { $1 :: $3 }
+parl :
+| par { [ $1 ] }
+| par CMA parl { $1 :: $3 }
 ;
 
-pars :
-| PARA ID { PARA $2 }
+par :
+| T ID { T $2 }
 ;
 
 

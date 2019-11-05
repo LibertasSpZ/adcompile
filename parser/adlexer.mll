@@ -15,7 +15,7 @@ rule token = parse
 | "abort" { ABORT }
 | "skip" { SKIP }
 | "q" { Q }
-| "t" { PARA }
+| "t" { T }
 | ['0'-'9']['0'-'9']* as str { ID(int_of_string(str)) }
 | eof { EOF }
 | _ as chr { failwith ("lex error: "^(Char.escaped chr))}
