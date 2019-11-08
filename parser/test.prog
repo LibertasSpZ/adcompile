@@ -1,4 +1,8 @@
 
 abort()[q1,q2,q3];
-skip(t0)[q1,q2,q3]
+skip()[q1,q2,q3];
+q3 := |0>;
+XX(t1)[q1,q2];
+X(t2)[q3,q4];
+C-X(t3)[q1,q3]
 

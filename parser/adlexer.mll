@@ -10,10 +10,24 @@ rule token = parse
 | ")" { RBC }
 | "{" { LBS }
 | "}" { RBS }
+| ":=" { ASS }
+| "|" { KETL }
+| ">" { KETR }
 | "," { CMA }
 | ";" { SCN }
 | "abort" { ABORT }
 | "skip" { SKIP }
+| "H" { H }
+| "CNOT" { CN }
+| "X" { X }
+| "Y" { Y }
+| "Z" { Z }
+| "XX" { XX }
+| "YY" { YY }
+| "ZZ" { ZZ }
+| "C-X" { CX }
+| "C-Y" { CY }
+| "C-Z" { CZ }
 | "q" { Q }
 | "t" { T }
 | ['0'-'9']['0'-'9']* as str { ID(int_of_string(str)) }
