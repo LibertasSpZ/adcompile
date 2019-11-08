@@ -28,6 +28,9 @@ rule token = parse
 | "C-X" { CX }
 | "C-Y" { CY }
 | "C-Z" { CZ }
+| "C-XX" { CXX }
+| "C-YY" { CYY }
+| "C-ZZ" { CZZ }
 | "q" { Q }
 | "t" { T }
 | ['0'-'9']['0'-'9']* as str { ID(int_of_string(str)) }

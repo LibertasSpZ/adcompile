@@ -25,6 +25,9 @@ type unitary =
 | CX of parl
 | CY of parl
 | CZ of parl
+| CXX of parl
+| CYY of parl
+| CZZ of parl
 
 type op = 
 | Abort of parl * qbl

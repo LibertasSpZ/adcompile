@@ -7,7 +7,7 @@
 %token LBS RBS
 %token CMA SCN
 %token ABORT SKIP ASS KETL KETR
-%token  H CN X Y Z XX YY ZZ CX CY CZ
+%token  H CN X Y Z XX YY ZZ CX CY CZ CXX CYY CZZ
 
 %token Q T
 %token <int> ID
@@ -45,7 +45,10 @@ paredu :
 | ZZ pars { ZZ $2 }
 | CX pars { CX $2 }
 | CY pars { CY $2 }
-| CZ pars { CZ $2 }
+| CZ pars { CZZ $2 }
+| CXX pars { CXX $2 }
+| CYY pars { CYY $2 }
+| CZZ pars { CZZ $2 }
 ;
 qbs :
 | LB qbl RB { $2 }
