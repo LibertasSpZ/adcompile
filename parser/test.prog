@@ -1,8 +1,21 @@
 
-abort()[q1,q2,q3];
-skip()[q1,q2,q3];
-q3 := |0>;
-XX(t1)[q1,q2];
-X(t2)[q3,q4];
-C-X(t3)[q1,q3]
 
+
+
+
+case M[q0] = 0 then
+	abort()[q1,q2,q3];
+	skip()[q1,q2,q3];
+	q3 := |0>
+else
+	XX(t1)[q1,q2];
+	X(t2)[q3,q4];
+	C-X(t3)[q1,q3]
+end;
+
+
+
+while{2} M[q0] = 1 do
+	Z(t1)[q1];
+	XX(t5)[q1,q2]
+od

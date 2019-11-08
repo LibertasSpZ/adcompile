@@ -6,8 +6,9 @@
 %token LBC RBC
 %token LBS RBS
 %token CMA SCN
-%token ABORT SKIP ASS KETL KETR
-%token  H CN X Y Z XX YY ZZ CX CY CZ CXX CYY CZZ
+%token ABORT SKIP ASS EQS KETL KETR
+%token H CN X Y Z XX YY ZZ CX CY CZ CXX CYY CZZ
+%token MEAS CASE THEN ELSE FI WHILE DO OD
 
 %token Q T
 %token <int> ID
@@ -20,20 +21,22 @@
 %%
 
 program :
-| ops EOF { $1 }
+| op EOF { $1 }
 ;
 
-ops :
-| op { [ $1 ] } 
-| op SCN ops { $1 :: $3 }
-;
+
+
 
 op :
 | ABORT pars qbs { Abort ($2, $3) }
 | SKIP pars qbs { Skip ($2, $3) }
 | qb ASS KETL ID KETR { Init $1 }
 | paredu qbs { Uapp ($1, $2)}
+| op SCN op { Seq ($1, $3) }
+| CASE MEAS qbs EQS ID THEN op ELSE op FI { Case ($3, $7, $9) }
+| WHILE LBS ID RBS MEAS qbs EQS ID DO op OD { Bwhile ($3, $6, $10)} 
 ;
+
 paredu :
 | H pars { H $2 }
 | CN pars { CN $2 }
@@ -50,6 +53,7 @@ paredu :
 | CYY pars { CYY $2 }
 | CZZ pars { CZZ $2 }
 ;
+
 qbs :
 | LB qbl RB { $2 }
 ;
