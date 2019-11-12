@@ -10,7 +10,7 @@ case M[q0] = 0 then
 else
 	XX(t1)[q1,q2];
 	X(t2)[q3,q4];
-	C-X(t3)[q1,q3]
+	XX(t3)[q1,q3]
 end;
 
 

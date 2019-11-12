@@ -630,22 +630,27 @@ let rec codeCompilation u : com list =
     | UnderlineOneBRot (uu, par) -> [Uapp (OneBRot (uu, par),ql)]
     | UnderlineTwoBRot (uu, par) -> [Uapp (TwoBRot (uu, par),ql)]
   )
-  | UnderlineSeq (u1, u2) -> ( match (codeCompilation u1 = [Abort (qListOfCom u1)])
+  | UnderlineSeq (u1, u2) -> ( let cu1 = codeCompilation u1 in 
+    match ( cu1 = [Abort (qListOfUnparCom (List.hd cu1))])
   with 
-    | false -> (match (codeCompilation u2 = [Abort (qListOfCom u2)])
+    | false -> ( let cu2 = codeCompilation u2 in 
+    match ( cu2 = [Abort (qListOfUnparCom (List.hd cu2))])
   with 
       |false -> returnConcat (codeCompilation u1) (codeCompilation u2)
       |true -> [Abort (qListOfCom u)]
     )
     | true -> [Abort (qListOfCom u)]
   )
-  | UnderlineAdd (u1, u2) -> ( match (codeCompilation u1 = [Abort (qListOfCom u1)])
+  | UnderlineAdd (u1, u2) -> ( let cu1 = codeCompilation u1 in 
+    match ( cu1 = [Abort (qListOfUnparCom (List.hd cu1))])
   with 
-    | false -> (match (codeCompilation u2 = [Abort (qListOfCom u2)]) with 
+    | false -> (let cu2 = codeCompilation u2 in 
+    match ( cu2 = [Abort (qListOfUnparCom (List.hd cu2))]) with 
       |false -> List.append (codeCompilation u1) (codeCompilation u2)
       |true -> codeCompilation u1
     )
-    | true -> (match (codeCompilation u2 = [Abort (qListOfCom u2)])
+    | true -> (let cu2 = codeCompilation u2 in 
+    match ( cu2 = [Abort (qListOfUnparCom (List.hd cu2))])
   with 
       |false -> codeCompilation u2
       |true -> [Abort (qListOfCom u)]
