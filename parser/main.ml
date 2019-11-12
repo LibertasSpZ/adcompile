@@ -101,6 +101,11 @@ let automate_qiuDao f papar =
 	let daoChengXu = codeTransformation ndprog papar in 
   (* let opDaoChengXU = *) printList (codeCompilation daoChengXu)
 
+let () = 
+  let len = Array.length Sys.argv in
+    match len with
+    | 3 -> automate_qiuDao Sys.argv.(1) Sys.argv.(2)
+    | _ -> print_endline "error!"
  
 (*** let test_p10 = 
 let c4 = parser_to_compiler (parse_file) in
