@@ -636,7 +636,7 @@ let rec codeCompilation u : com list =
     | false -> ( let cu2 = codeCompilation u2 in 
     match ( cu2 = [Abort (qListOfUnparCom (List.hd cu2))])
   with 
-      |false -> returnConcat (codeCompilation u1) (codeCompilation u2)
+      |false -> returnConcat cu1 cu2 (* (codeCompilation u1) (codeCompilation u2) *)
       |true -> [Abort (qListOfCom u)]
     )
     | true -> [Abort (qListOfCom u)]
@@ -646,7 +646,7 @@ let rec codeCompilation u : com list =
   with 
     | false -> (let cu2 = codeCompilation u2 in 
     match ( cu2 = [Abort (qListOfUnparCom (List.hd cu2))]) with 
-      |false -> List.append (codeCompilation u1) (codeCompilation u2)
+      |false -> List.append cu1 cu2(* (codeCompilation u1) (codeCompilation u2) *)
       |true -> codeCompilation u1
     )
     | true -> (let cu2 = codeCompilation u2 in 
