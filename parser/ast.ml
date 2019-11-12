@@ -31,14 +31,24 @@ type unitary =
 
 
 
-type op = 
+(* type op = 
 | Abort of parl * qbl
 | Skip of parl * qbl
 | Init of qb 
 | Uapp of unitary * qbl
 | Seq of op * op 
 | Case of qbl * op * op
-| Bwhile of id * qbl * op 
+| Bwhile of id * qbl * op *)
+
+type program = 
+| Abort of parl * qbl
+| Skip of parl * qbl
+| Init of qb 
+| Uapp of unitary * qbl
+| Seq of program * program
+| Case of qbl * program * program
+| Bwhile of id * qbl * program 
 
 
-type program = op (* list *)
+
+(* type program = op *) (* list *)

@@ -17,11 +17,12 @@ type parid = string
 type par = parid list
 (* The list of parameters  *)
 
-type evaledparid = float
-type evaledpar = evaledparid list
+ type evaledparid = float
+type evaledpar = evaledparid list 
+
 (* type evalpar = par -> evaledpar *)
 (* evaluating a list of parameters, e.g: (theta_1,theta_2)\mapsto
-(0,5,0.7) . Semantics. No need yet. *)
+(0,5,0.7) . Semantics. No need yet for symbolic derivatives. *)
 
 
 
@@ -104,17 +105,17 @@ let rec unparse_com c : string =
   | Seq (c1, c2) ->
      let s1 = unparse_com c1 in
      let s2 = unparse_com c2 in
-     s1 ^ "; \r" ^ s2
+     s1 ^ "; \n" ^ s2
   | Case (qb, u1, u2) ->
      let q = unparse_qbit qb in
      let s1 = unparse_com u1 in
      let s2 = unparse_com u2 in
-     "case M(" ^ q ^ ") = 0 then \r" ^ s1 ^ "\relse\r" ^ s2 ^ "\rend"
+     "case M(" ^ q ^ ") = 0 then \n" ^ s1 ^ "\nelse\n" ^ s2 ^ "\nend"
   | Bwhile (num, qb, u1) ->
      let nt = Printf.sprintf "%d" num in
      let q = unparse_qbit qb in
      let s1 = unparse_com u1 in
-     "while^" ^ nt ^ " M(" ^ q ^ ")= 1 do " ^ s1 ^ "\r od"  
+     "while^" ^ nt ^ " M(" ^ q ^ ")= 1 do " ^ s1 ^ "\n od"  
 (* endof syntax for parameterized progs (\S 4.1) *)
 
 
@@ -176,17 +177,17 @@ let rec unparse_UNcom c : string =
   | UNSeq (c1, c2) ->
      let s1 = unparse_UNcom c1 in
      let s2 = unparse_UNcom c2 in
-     s1 ^ "; \r" ^ s2
+     s1 ^ "; \n" ^ s2
   | UNCase (qb, u1, u2) ->
      let q = unparse_qbit qb in
      let s1 = unparse_UNcom u1 in
      let s2 = unparse_UNcom u2 in
-     "case M(" ^ q ^ ") = 0 then \r" ^ s1 ^ "\relse\r" ^ s2 ^ "\rend"
+     "case M(" ^ q ^ ") = 0 then \n" ^ s1 ^ "\nelse\n" ^ s2 ^ "\nend"
   | UNBwhile (num, qb, u1) ->
      let nt = Printf.sprintf "%d" num in
      let q = unparse_qbit qb in
      let s1 = unparse_UNcom u1 in
-     "while^" ^ nt ^ " M(" ^ q ^ ")= 1 do " ^ s1 ^ "\r od"
+     "while^" ^ nt ^ " M(" ^ q ^ ")= 1 do " ^ s1 ^ "\n od"
 (* endof syntax for UNparameterized progs (\S 3.1) *)
 
 
@@ -243,17 +244,17 @@ let rec unparse_UnderlineCom c : string =
   | UnderlineSeq (c1, c2) ->
      let s1 = unparse_UnderlineCom c1 in
      let s2 = unparse_UnderlineCom c2 in
-     s1 ^ "; \r" ^ s2
+     s1 ^ "; \n" ^ s2
   | UnderlineCase (qb, u1, u2) ->
      let q = unparse_qbit qb in
      let s1 = unparse_UnderlineCom u1 in
      let s2 = unparse_UnderlineCom u2 in
-     "case M(" ^ q ^ ") = 0 then \r" ^ s1 ^ "\relse\r" ^ s2 ^ "\rend"
+     "case M(" ^ q ^ ") = 0 then \n" ^ s1 ^ "\nelse\n" ^ s2 ^ "\nend"
   | UnderlineBwhile (num, qb, u1) ->
      let nt = Printf.sprintf "%d" num in
      let q = unparse_qbit qb in
      let s1 = unparse_UnderlineCom u1 in
-     "while^" ^ nt ^ " M(" ^ q ^ ")= 1 do " ^ s1 ^ "\r od"
+     "while^" ^ nt ^ " M(" ^ q ^ ")= 1 do " ^ s1 ^ "\n od"
   | UnderlineAdd (u1, u2) -> 
      let s1 = unparse_UnderlineCom u1 in
      let s2 = unparse_UnderlineCom u2 in
@@ -316,7 +317,7 @@ let test_p4 =
   print_endline s2
 
   let () =
-  let cnextline = "\r" in 
+  let cnextline = "\n" in 
   print_endline cnextline
 
   let () =  
@@ -325,7 +326,7 @@ let test_p4 =
   print_endline s3
 
   let () =
-  let cnextline = "\r" in 
+  let cnextline = "\n" in 
   print_endline cnextline
   
   let () =  
@@ -334,7 +335,7 @@ let test_p4 =
   print_endline s4
 
   let () =
-  let cnextline = "\r" in 
+  let cnextline = "\n" in 
   print_endline cnextline
 
   ***)
@@ -389,7 +390,7 @@ let () =
 
 
 let () =
-  let cnextline = "\r" in 
+  let cnextline = "\n" in 
   print_endline cnextline
 
 ***)
@@ -699,11 +700,13 @@ let test_p7 =
 
  let rec printList li =
  match li with 
- | [] -> let cnextline = "\r End of printing \r" in 
+ | [] -> let cnextline = "\n End of printing \n" in 
                  print_endline cnextline
- | x :: l' -> let cnextline = "\r" in 
+ | x :: l' -> let cnextline = "\n" in 
              let s6 = unparse_com x in
-             print_endline s6 ; print_endline cnextline; printList l'
+             print_endline s6;
+             print_endline cnextline;
+             printList l'
 
 
  
@@ -742,42 +745,46 @@ let test_p9 =
 
 
 (**************
-let () =  printList test_p7 (* match (List.length opDaoChengXU > 0) with
-  | false -> let cnextline = "WTF, empty set of progs?\r" in 
-                 print_endline cnextline
-  let c6 = test_p7 in 
-  let s6 = unparse_UnderlineCom c6 in
-  print_endline s6 *)
-
-let () =
-  let cnextline = "\r" in 
-  print_endline cnextline
-
-
-let () =  printList test_p8 (* match (List.length opDaoChengXU > 0) with
-  | false -> let cnextline = "WTF, empty set of progs?\r" in 
-                 print_endline cnextline
-  let c6 = test_p7 in 
-  let s6 = unparse_UnderlineCom c6 in
-  print_endline s6 *)
-
-let () =
-  let cnextline = "\r" in 
-  print_endline cnextline
-let () =  printList test_p9 (* match (List.length opDaoChengXU > 0) with
-  | false -> let cnextline = "WTF, empty set of progs?\r" in 
-                 print_endline cnextline
-  let c6 = test_p7 in 
-  let s6 = unparse_UnderlineCom c6 in
-  print_endline s6 *)
-
-let () =
-  let cnextline = "\r" in 
-  print_endline cnextline
 
 
 
 ****************)
+
+let func1 =  printList test_p7 (* match (List.length opDaoChengXU > 0) with
+  | false -> let cnextline = "WTF, empty set of progs?\n" in 
+                 print_endline cnextline
+  let c6 = test_p7 in 
+  let s6 = unparse_UnderlineCom c6 in
+  print_endline s6 *)
+
+let func2 =
+  let cnextline = "\n" in 
+  print_endline cnextline
+
+
+let func3 =  printList test_p8 (* match (List.length opDaoChengXU > 0) with
+  | false -> let cnextline = "WTF, empty set of progs?\n" in 
+                 print_endline cnextline
+  let c6 = test_p7 in 
+  let s6 = unparse_UnderlineCom c6 in
+  print_endline s6 *)
+
+let func4 =
+  let cnextline = "\n" in 
+  print_endline cnextline
+
+
+
+let func5 =  printList test_p9 (* match (List.length opDaoChengXU > 0) with
+  | false -> let cnextline = "WTF, empty set of progs?\n" in 
+                 print_endline cnextline
+  let c6 = test_p7 in 
+  let s6 = unparse_UnderlineCom c6 in
+  print_endline s6 *)
+
+let func6 =
+  let cnextline = "\n" in 
+  print_endline cnextline
   (*Garbage code: match (List.mem parid t2) with
     | true -> UnderlineAbort (List.append ql [Qvar "Place holder, change later."])
     | false -> UnderlineAbort (List.append ql [Qvar "Place holder, change later."])*)
