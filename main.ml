@@ -88,7 +88,7 @@ let rec printList li =
  | [] -> let cnextline = "\n End of printing \n" in 
                  print_endline cnextline
  | x :: l' -> let cnextline = "\n" in 
-             let s6 = unparse_com x in
+             let s6 = unparse_com x 0 in
              print_endline s6;
              print_endline cnextline;
              printList l'

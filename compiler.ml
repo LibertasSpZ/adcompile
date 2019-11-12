@@ -87,35 +87,41 @@ let unparse_unitary u : string =
      let st = unparse_par t in 
      g ^ "(" ^ st ^ ")"
 
-let rec unparse_com c : string = 
+let rec indent n : string =
+  match n with
+  | 0 -> ""
+  | x -> "    " ^ indent (x-1)
+
+let rec unparse_com c lv : string = 
+  let it = indent lv in 
   match c with
   | Abort ql -> 
      let sql = unparse_qlist ql in
-     "Abort[" ^ sql ^ "]"
+     it ^ "abort[" ^ sql ^ "]"
   | Skip ql -> 
      let sql = unparse_qlist ql in
-      "Skip[" ^ sql ^ "]"
+      it ^ "skip[" ^ sql ^ "]"
   | Init q -> 
      let s = unparse_qbit q in 
-     s ^ ":=∣0⟩"
+     it ^ s ^ ":=∣0⟩"
   | Uapp (u, ql) -> 
      let su = unparse_unitary u in 
      let sql = unparse_qlist ql in 
-     sql ^ ":=" ^ su ^ "[" ^ sql ^ "]"
+     it ^ sql ^ ":=" ^ su ^ "[" ^ sql ^ "]"
   | Seq (c1, c2) ->
-     let s1 = unparse_com c1 in
-     let s2 = unparse_com c2 in
+     let s1 = unparse_com c1 lv in
+     let s2 = unparse_com c2 lv in
      s1 ^ "; \n" ^ s2
   | Case (qb, u1, u2) ->
      let q = unparse_qbit qb in
-     let s1 = unparse_com u1 in
-     let s2 = unparse_com u2 in
-     "case M(" ^ q ^ ") = 0 then \n" ^ s1 ^ "\nelse\n" ^ s2 ^ "\nend"
+     let s1 = unparse_com u1 (lv+1) in
+     let s2 = unparse_com u2 (lv+1) in
+     it ^ "case M(" ^ q ^ ") = 0 then \n" ^ s1 ^ "\n" ^ it ^ "else\n" ^ s2 ^ "\n" ^ it ^ "end"
   | Bwhile (num, qb, u1) ->
      let nt = Printf.sprintf "%d" num in
      let q = unparse_qbit qb in
-     let s1 = unparse_com u1 in
-     "while^" ^ nt ^ " M(" ^ q ^ ")= 1 do " ^ s1 ^ "\n od"  
+     let s1 = unparse_com u1 (lv+1) in
+     it ^ "while^" ^ nt ^ " M(" ^ q ^ ")= 1 do " ^ s1 ^ "\n" ^ it ^ "od"  
 (* endof syntax for parameterized progs (\S 4.1) *)
 
 
