@@ -698,15 +698,7 @@ let test_p7 =
   let daoChengXu = codeTransformation ndprog2 papar in 
   (* let opDaoChengXU = *) codeCompilation daoChengXu
 
- let rec printList li =
- match li with 
- | [] -> let cnextline = "\n End of printing \n" in 
-                 print_endline cnextline
- | x :: l' -> let cnextline = "\n" in 
-             let s6 = unparse_com x in
-             print_endline s6;
-             print_endline cnextline;
-             printList l'
+
 
 
  
@@ -748,7 +740,6 @@ let test_p9 =
 
 
 
-****************)
 
 let func1 =  printList test_p7 (* match (List.length opDaoChengXU > 0) with
   | false -> let cnextline = "WTF, empty set of progs?\n" in 
@@ -788,3 +779,7 @@ let func6 =
   (*Garbage code: match (List.mem parid t2) with
     | true -> UnderlineAbort (List.append ql [Qvar "Place holder, change later."])
     | false -> UnderlineAbort (List.append ql [Qvar "Place holder, change later."])*)
+
+
+****************)
+

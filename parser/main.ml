@@ -83,14 +83,25 @@ let parse_file f  =
   Adparser.program Adlexer.token lexbuf
 
 
+let rec printList li =
+ match li with 
+ | [] -> let cnextline = "\n End of printing \n" in 
+                 print_endline cnextline
+ | x :: l' -> let cnextline = "\n" in 
+             let s6 = unparse_com x in
+             print_endline s6;
+             print_endline cnextline;
+             printList l'
+
 let automate_qiuDao f papar = 
 	let prog = parse_file f in 
 	let c4 = parser_to_compiler (prog) in
 	let ndprog = normalToNonDet (c4) in 
 	(* let papar = "t2" in *)
 	let daoChengXu = codeTransformation ndprog papar in 
-  (* let opDaoChengXU = *) codeCompilation daoChengXu
+  (* let opDaoChengXU = *) printList (codeCompilation daoChengXu)
 
+ 
 (*** let test_p10 = 
 let c4 = parser_to_compiler (parse_file) in
 let ndprog = normalToNonDet (c4) in 
