@@ -65,8 +65,13 @@ let rec parser_to_compiler prog =
 | Ast.Abort (a,b) -> Compiler.Abort ((* str_to_complql*)(astqubl_to_strl b)) 
 | Ast.Skip (a,b) -> Compiler.Skip ((* str_to_complql*)(astqubl_to_strl b)) 
 | Ast.Uapp (a,b) -> Compiler.Uapp ((astU_to_compU a), (astqubl_to_strl b))
+| Ast.Init q -> Compiler.Init (astqubit_to_str q)
 | Ast.Seq (a,b) -> Compiler.Seq ((parser_to_compiler a), (parser_to_compiler b))
-| _ -> Compiler.Abort [Compiler.Qvar "bj"]
+| Ast.Case (ql, p1, p2) -> Compiler.Case (astqubit_to_str (List.hd ql), parser_to_compiler p1,
+							parser_to_compiler p2)
+| Ast.Bwhile (n, ql, p1) -> Compiler.Bwhile (n, astqubit_to_str (List.hd ql), 
+							parser_to_compiler p1)
+(* | _ -> Compiler.Abort [Compiler.Qvar "WA"] *)
 
 
 (*** The above: mapping btw parser to compler ***)
