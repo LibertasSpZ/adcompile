@@ -696,6 +696,8 @@ let rec codeCompilation u : com list =
     ) 
 
 
+(********* Test cases No need to be executed here 
+
 let test_p7 = 
   let c0 = Init (Qvar "q0") in
   let c1 = Init (Qvar "q1") in
@@ -745,7 +747,7 @@ let test_p9 =
 
 
 
-
+****************)
 
 (**************
 

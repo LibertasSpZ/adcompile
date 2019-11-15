@@ -85,7 +85,7 @@ let parse_file f  =
 
 let rec printList li =
  match li with 
- | [] -> let cnextline = "\n End of printing \n" in 
+ | [] -> let cnextline = "\n End of listing programs in the compiled set! \n" in 
                  print_endline cnextline
  | x :: l' -> let cnextline = "\n" in 
              let s6 = unparse_com x 0 in
@@ -99,12 +99,20 @@ let automate_qiuDao f papar =
 	let ndprog = normalToNonDet (c4) in 
 	(* let papar = "t2" in *)
 	let daoChengXu = codeTransformation ndprog papar in 
-  (* let opDaoChengXU = *) printList (codeCompilation daoChengXu)
+    (* printList *) (codeCompilation daoChengXu)
 
 let () = 
   let len = Array.length Sys.argv in
     match len with
-    | 3 -> automate_qiuDao Sys.argv.(1) Sys.argv.(2)
+    | 3 -> let cnextline = "\n # of progs in the compiled set of derivative prog: \n" in
+    	   let cnextline2 = "\n Thanks for using our product. Have a good day. \n" in
+    	   let resli = automate_qiuDao Sys.argv.(1) Sys.argv.(2) in 
+    	   let bd = List.length(resli) in
+    	       printList resli; 
+    	       print_endline cnextline;
+    	       Printf.printf "%d\n" bd;  
+    	       (* Printf.sprintf string_of_int(bd); *)
+    	       print_endline cnextline2 
     | _ -> print_endline "error!"
  
 (*** let test_p10 = 
