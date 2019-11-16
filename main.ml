@@ -110,7 +110,7 @@ let () =
     	   let bd = List.length(resli) in
     	       printList resli; 
     	       print_endline cnextline;
-    	       Printf.printf "%d\n" bd;  
+    	       Printf.printf " %d\n" bd;  
     	       (* Printf.sprintf string_of_int(bd); *)
     	       print_endline cnextline2 
     | _ -> print_endline "error!"

@@ -513,10 +513,12 @@ match u with
  u2), UnderlineSeq (u1, codeTransformation u2 parid) )
  | UnderlineCase (qb, u1, u2) -> UnderlineCase (qb, codeTransformation u1 parid, 
  codeTransformation u2 parid)
- | UnderlineBwhile (num, qb, u1) -> (match (num > 1) with 
+ | UnderlineBwhile (num, qb, u1) -> (let bigli = appendWithoutDuplicate (qListOfCom u1) [Qvar "A"] in 
+
+    (match (num > 1) with 
     | false -> (match (num = 0) with 
       | true -> UnderlineAbort ([Qvar "Error! Need T > 0."])
-      | false -> ( let bigli = appendWithoutDuplicate (qListOfCom u1) [Qvar "A"] in 
+      | false -> ( 
         codeTransformation
         (UnderlineCase (qb, UnderlineSkip (bigli),
         UnderlineSeq (u1,
@@ -525,11 +527,13 @@ match u with
       )   
     (* Next, T >= 2*)
     | true -> codeTransformation 
-        (UnderlineCase (qb,UnderlineSkip (appendWithoutDuplicate (qListOfCom u1) [Qvar "A"]),
+        (UnderlineCase (qb,UnderlineSkip (bigli),
         UnderlineSeq (u1, 
           UnderlineBwhile (num-1, qb, u1) )
         )) parid
-    ) 
+    )
+
+  ) 
  (* | _ -> UnderlineAbort ([Qvar "Place holder, fill later."]) *)
 (* Place holder message: please Express Unitary as 
     Product of 1qb or 2qb rotations, as that's the only
