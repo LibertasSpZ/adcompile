@@ -514,11 +514,12 @@ match u with
  | UnderlineBwhile (num, qb, u1) -> (match (num > 1) with 
     | false -> (match (num = 0) with 
       | true -> UnderlineAbort ([Qvar "Error! Need T > 0."])
-      | false -> codeTransformation
-        (UnderlineCase (qb, UnderlineSkip (appendWithoutDuplicate (qListOfCom u1) [Qvar "A"]),
+      | false -> ( let bigli = appendWithoutDuplicate (qListOfCom u1) [Qvar "A"] in 
+        codeTransformation
+        (UnderlineCase (qb, UnderlineSkip (bigli),
         UnderlineSeq (u1,
-          UnderlineAbort (appendWithoutDuplicate (qListOfCom u1) [Qvar "A"]))
-        )) parid
+          UnderlineAbort (bigli) (* appendWithoutDuplicate (qListOfCom u1) [Qvar "A"] *))
+        )) parid)
       )   
     (* Next, T >= 2*)
     | true -> codeTransformation 
