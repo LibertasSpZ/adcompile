@@ -1,4 +1,4 @@
-case M[q0] = 0 then 
+case M[q0] = 0 then
 	q1 := |0>;
 	q2 := |0>;
 	X(t1)[q1];
@@ -17,7 +17,6 @@ case M[q0] = 0 then
 	X(t8)[q2];
 	Z(t9)[q1];
 	Z(t10)[q2]
-
 else 
 	q1 := |0>;
 	q2 := |0>;

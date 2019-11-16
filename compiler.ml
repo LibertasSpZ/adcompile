@@ -630,32 +630,35 @@ let rec codeCompilation u : com list =
     | UnderlineOneBRot (uu, par) -> [Uapp (OneBRot (uu, par),ql)]
     | UnderlineTwoBRot (uu, par) -> [Uapp (TwoBRot (uu, par),ql)]
   )
-  | UnderlineSeq (u1, u2) -> ( let cu1 = codeCompilation u1 in 
-    match ( cu1 = [Abort (qListOfUnparCom (List.hd cu1))])
-  with 
+  | UnderlineSeq (u1, u2) -> ( let clcu = qListOfCom u in 
+    ( let cu1 = codeCompilation u1 in 
+    match ( cu1 = [Abort (qListOfUnparCom (List.hd cu1))]) with 
     | false -> ( let cu2 = codeCompilation u2 in 
-    match ( cu2 = [Abort (qListOfUnparCom (List.hd cu2))])
-  with 
+      match ( cu2 = [Abort (qListOfUnparCom (List.hd cu2))]) with 
       |false -> returnConcat cu1 cu2 (* (codeCompilation u1) (codeCompilation u2) *)
-      |true -> [Abort (qListOfCom u)]
+      |true -> [Abort (clcu) (* qListOfCom u *) ]
     )
-    | true -> [Abort (qListOfCom u)]
+    | true -> [Abort (clcu) ] (* qListOfCom u *) 
+    )
   )
-  | UnderlineAdd (u1, u2) -> ( let cu1 = codeCompilation u1 in 
+  | UnderlineAdd (u1, u2) -> ( let clcu = qListOfCom u in 
+    ( let cu1 = codeCompilation u1 in 
     match ( cu1 = [Abort (qListOfUnparCom (List.hd cu1))])
   with 
     | false -> (let cu2 = codeCompilation u2 in 
     match ( cu2 = [Abort (qListOfUnparCom (List.hd cu2))]) with 
       |false -> List.append cu1 cu2(* (codeCompilation u1) (codeCompilation u2) *)
-      |true -> codeCompilation u1
+      |true -> cu1 (* codeCompilation u1 *)
     )
     | true -> (let cu2 = codeCompilation u2 in 
     match ( cu2 = [Abort (qListOfUnparCom (List.hd cu2))])
   with 
-      |false -> codeCompilation u2
-      |true -> [Abort (qListOfCom u)]
+      |false -> cu2 (* codeCompilation u2 *)
+      |true -> [Abort (clcu)(* qListOfCom u *) ]
     )
   )
+  )
+
  
  | UnderlineCase (qb, u1, u2) -> let l1 = codeCompilation u1 in 
                                  let l2 = codeCompilation u2 in 
@@ -678,22 +681,24 @@ let rec codeCompilation u : com list =
  )
  (* UnderlineCase (qb, codeTransformation u1 parid, 
  codeTransformation u2 parid) *)
- | UnderlineBwhile (num, qb, u1) -> (match (num > 1) with 
+ | UnderlineBwhile (num, qb, u1) -> (let clcu1 = qListOfCom u1 in
+      (match (num > 1) with 
     | false -> (match (num = 0) with 
       | true -> [Abort ([Qvar "Error! Need T > 0."])]
       | false -> codeCompilation
-        (UnderlineCase (qb, UnderlineSkip (qListOfCom u1),
+        (UnderlineCase (qb, UnderlineSkip (clcu1) (*qListOfCom u1*) ,
         UnderlineSeq (u1,
-          UnderlineAbort (qListOfCom u1) )
+          UnderlineAbort (clcu1) (*qListOfCom u1*)(*qListOfCom u1*) )
         )) 
       )   
     (* Next, T >= 2*)
     | true -> codeCompilation
-        (UnderlineCase (qb,UnderlineSkip (qListOfCom u1) ,
+        (UnderlineCase (qb,UnderlineSkip (clcu1)(*qListOfCom u1*) ,
         UnderlineSeq (u1, 
           UnderlineBwhile (num-1, qb, u1) )
         )) 
     ) 
+    )
 
 
 (********* Test cases No need to be executed here 
