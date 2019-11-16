@@ -1,6 +1,6 @@
 while{2} M[q0] = 1 do 
 
-	while{3} M[q00] = 1 do
+	while{3} M[q100] = 1 do
 		q1 := |0>;
 		q2 := |0>;
 		X(t1)[q1];

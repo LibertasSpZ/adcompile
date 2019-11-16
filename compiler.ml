@@ -503,7 +503,9 @@ match u with
     | true -> UnderlineAbort (List.append ql [Qvar "Please only pass me Rotations."]) 
     (*UnderlineUapp(UnderlineGate(uuu,t), (List.append ql [Qvar "Place holder 00, change later."]))*)
     | false -> UnderlineAbort (List.append ql [Qvar "Please only pass me Rotations."]) ) *)
-  |_ -> UnderlineAbort (appendWithoutDuplicate ql [Qvar "Please only pass me Rotations."]) 
+  |_ -> UnderlineAbort (appendWithoutDuplicate ql [Qvar "A"])
+  (* Note: H, CNOT derivative is Abort; assume we don't do higher order derivative so
+  CX~CZ, CXX~CZZ are never differentiated. *) 
   )
  | UnderlineAdd (u1, u2) -> UnderlineAdd (codeTransformation u1 parid,
   codeTransformation u2 parid)
@@ -632,7 +634,35 @@ let rec codeCompilation u : com list =
     | UnderlineTwoBRot (uu, par) -> [Uapp (TwoBRot (uu, par),ql)]
   )
   | UnderlineSeq (u1, u2) -> ( let clcu = qListOfCom u in 
-    ( let cu1 = codeCompilation u1 in 
+                               let cu1 = codeCompilation u1 in
+                               let cu2 = codeCompilation u2 in 
+      match (List.length cu1 =1 ) with 
+      | false -> (
+                  match (List.length cu2 = 1) with 
+                  |false -> returnConcat cu1 cu2
+                  |true -> (let  singleu2 = List.hd cu2 in 
+                           match singleu2 with 
+                           |Abort _ -> [Abort (clcu)]
+                           |_ -> returnConcat cu1 [singleu2]
+
+                         )
+                )
+      | true ->(  let singleu1 = List.hd cu1 in 
+                  match singleu1 with 
+                  | Abort _ -> [Abort (clcu)]
+                  | _ -> (
+                          match (List.length cu2 = 1) with 
+                          |false -> returnConcat cu1 cu2
+                          |true -> (let  singleu2 = List.hd cu2 in 
+                           match singleu2 with 
+                           |Abort _ -> [Abort (clcu)]
+                           |_ -> returnConcat [singleu1] [singleu2]
+
+                         )
+                    )
+                )
+
+    (*  
     match ( cu1 = [Abort (qListOfUnparCom (List.hd cu1))]) with 
     | false -> ( let cu2 = codeCompilation u2 in 
       match ( cu2 = [Abort (qListOfUnparCom (List.hd cu2))]) with 
@@ -640,12 +670,53 @@ let rec codeCompilation u : com list =
       |true -> [Abort (clcu) (* qListOfCom u *) ]
     )
     | true -> [Abort (clcu) ] (* qListOfCom u *) 
-    )
+    *)
+  
+
+
   )
   | UnderlineAdd (u1, u2) -> ( let clcu = qListOfCom u in 
-    ( let cu1 = codeCompilation u1 in 
-    match ( cu1 = [Abort (qListOfUnparCom (List.hd cu1))])
-  with 
+                               let cu1 = codeCompilation u1 in 
+                               match (List.length cu1 = 1) with 
+                               |false -> (let cu2 = codeCompilation u2 in 
+                                          match (List.length cu2 = 1) with
+                                          |false -> List.append cu1 cu2 
+                                          |true -> (let singleu2 = List.hd cu2 in 
+                                                    match singleu2 with
+                                                    |Abort _ -> cu1 
+                                                    |_ -> List.append cu1 cu2 
+                                                  ) 
+
+
+                               )
+                               |true -> (let singleu1 = List.hd cu1 in 
+                                         let cu2 = codeCompilation u2 in 
+                                                    match singleu1 with
+                                                    |Abort _ -> (match (List.length cu2 = 1) with
+                                                      | false -> cu2 
+                                                      | true -> (let singleu2 = List.hd cu2 in
+                                                                match singleu2 with 
+                                                                |Abort _ -> [Abort (clcu)]
+                                                                |_ -> [singleu2]
+
+                                                    )
+                                                    )
+
+                                                    |_ -> (
+                                                      match (List.length cu2 = 1) with
+                                                      | false -> List.append cu1 cu2 
+                                                      | true -> (let singleu2 = List.hd cu2 in
+                                                                match singleu2 with 
+                                                                |Abort _ -> [singleu1]
+                                                                |_ -> List.append cu1 cu2 
+
+
+                                                      ) 
+
+
+                                                    )  
+                                        ) 
+     (* match ( cu1 = [Abort (qListOfUnparCom (List.hd cu1))]) with 
     | false -> (let cu2 = codeCompilation u2 in 
     match ( cu2 = [Abort (qListOfUnparCom (List.hd cu2))]) with 
       |false -> List.append cu1 cu2(* (codeCompilation u1) (codeCompilation u2) *)
@@ -656,14 +727,17 @@ let rec codeCompilation u : com list =
   with 
       |false -> cu2 (* codeCompilation u2 *)
       |true -> [Abort (clcu)(* qListOfCom u *) ]
-    )
-  )
+    )*)
+    
   )
 
  
- | UnderlineCase (qb, u1, u2) -> let l1 = codeCompilation u1 in 
+ | UnderlineCase (qb, u1, u2) -> let clcu = qListOfCom u in
+                                 let l1 = codeCompilation u1 in 
                                  let l2 = codeCompilation u2 in 
-                                 let diff = List.length l1 - List.length l2 in 
+                                 let ll1 = List.length l1 in 
+                                 let ll2 = List.length l2 in
+                                 let diff = ll1 - ll2 in 
                                  (match (diff > 0) with 
                                   | true -> let filled2 = fillUp l1 l2 in 
                                             createIf qb l1 filled2
@@ -671,12 +745,29 @@ let rec codeCompilation u : com list =
                                   | false -> (match (diff = 0) with
                                     | false -> let filled1 = fillUp l1 l2 in 
                                             createIf qb filled1 l2
-                                    | true -> (match ( (l1 = [Abort (qListOfUnparCom (List.hd l1))]) && 
+                                    | true -> (match (ll1 = 1) with 
+                                      | false -> createIf qb l1 l2 
+                                      | true -> (let singleu1 = List.hd l1 in 
+                                                 let singleu2 = List.hd l2 in 
+                                                 (match singleu1 with 
+                                                 | Abort _ -> ( match singleu2 with
+                                                    |Abort _ -> [Abort (clcu)]
+                                                    |_ -> createIf qb [singleu1] [singleu2] 
+                                                 )
+                                                 | _ -> createIf qb l1 l2 
+
+                                               )
+
+
+                                      )
+
+                                      )
+                                    (* match ( (l1 = [Abort (qListOfUnparCom (List.hd l1))]) && 
                                       (l2 = [Abort (qListOfUnparCom (List.hd l2))]) ) with
                                       | true -> [Abort (appendWithoutDuplicate (appendWithoutDuplicate [qb] (qListOfUnparCom (List.hd l1))) 
                                         (qListOfUnparCom (List.hd l1)))]
                                       | _ -> createIf qb l1 l2
-                                    )       
+                                     *)       
                                   )
 
  )
