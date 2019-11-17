@@ -1,0 +1,83 @@
+case M(q0) = 0 then 
+    q1,q2:=CNOT()[q1,q2]; 
+    A:=H()[A]; 
+    q2,A:=C-Z(t1)[q2,A]; 
+    A:=H()[A]; 
+    q1,q2:=CNOT()[q1,q2]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3:=Z(t2)[q3]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=Z(t3)[q1]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=X(t4)[q1]; 
+    q2:=X(t5)[q2]; 
+    q3:=X(t6)[q3]
+else
+    q1,q2:=CNOT()[q1,q2]; 
+    A:=H()[A]; 
+    q2,A:=C-Z(t1)[q2,A]; 
+    A:=H()[A]; 
+    q1,q2:=CNOT()[q1,q2]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3:=Z(t1)[q3]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=Z(t1)[q1]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=X(t4)[q1]; 
+    q2:=X(t4)[q2]; 
+    q3:=X(t4)[q3]
+end
+
+
+case M(q0) = 0 then 
+    abort[q1,q2,A,q3]
+else
+    q1,q2:=CNOT()[q1,q2]; 
+    q2:=Z(t1)[q2]; 
+    q1,q2:=CNOT()[q1,q2]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    A:=H()[A]; 
+    q3,A:=C-Z(t1)[q3,A]; 
+    A:=H()[A]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=Z(t1)[q1]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=X(t4)[q1]; 
+    q2:=X(t4)[q2]; 
+    q3:=X(t4)[q3]
+end
+
+
+case M(q0) = 0 then 
+    abort[q1,q2,A,q3]
+else
+    q1,q2:=CNOT()[q1,q2]; 
+    q2:=Z(t1)[q2]; 
+    q1,q2:=CNOT()[q1,q2]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3:=Z(t1)[q3]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    A:=H()[A]; 
+    q1,A:=C-Z(t1)[q1,A]; 
+    A:=H()[A]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=X(t4)[q1]; 
+    q2:=X(t4)[q2]; 
+    q3:=X(t4)[q3]
+end
+
+
+
+ End of listing programs in the compiled set! 
+
+
+ # of progs in the compiled set of derivative prog: 
+
+ 3
+
+ Thanks for using our product. Have a good day. 
+

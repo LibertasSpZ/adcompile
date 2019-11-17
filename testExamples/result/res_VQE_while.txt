@@ -1,0 +1,39 @@
+case M(q0) = 0 then 
+    abort[q1,q2,A]
+else
+    q1:=∣0⟩; 
+    q2:=∣0⟩; 
+    A:=H()[A]; 
+    q1,A:=C-X(t1)[q1,A]; 
+    A:=H()[A]; 
+    q2:=X(t2)[q2]; 
+    q1:=Z(t3)[q1]; 
+    q2:=Z(t4)[q2]; 
+    q1:=H()[q1]; 
+    q1,q2:=CNOT()[q1,q2]; 
+    q2:=H()[q2]; 
+    q2,q1:=CNOT()[q2,q1]; 
+    q1:=Z(t5)[q1]; 
+    q2:=Z(t6)[q2]; 
+    q1:=X(t7)[q1]; 
+    q2:=X(t8)[q2]; 
+    q1:=Z(t9)[q1]; 
+    q2:=Z(t10)[q2]; 
+    case M(q0) = 0 then 
+        skip[q1,q2]
+    else
+        abort[q1,q2]
+    end
+end
+
+
+
+ End of listing programs in the compiled set! 
+
+
+ # of progs in the compiled set of derivative prog: 
+
+ 1
+
+ Thanks for using our product. Have a good day. 
+

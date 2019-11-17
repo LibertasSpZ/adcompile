@@ -1,0 +1,51 @@
+num occurances of t1:				||			num progs in compiled derivative
+QAOA_basic: 1								1
+QAOA_shared: 3								3
+QAOA_if: 3								3
+QAOA_while: 2								1
+
+QAOA_medium_basic:1							1
+QAOA_medium_shared: 16							16
+QAOA_medium_if:16							16
+QAOA_medium_while:96							32
+
+QAOA_large_basic:1							1
+QAOA_large_shared:46							46
+QAOA_large_if:46 							46
+QAOA_large_while: 276							92
+
+
+
+
+VQE_basic: 1								1
+VQE_shared: 2								2
+VQE_if: 2								2
+VQE_while: 2								1
+
+VQE_medium_basic: 1							1
+VQE_medium_shared: 6							6
+VQE_medium_if: 6							6
+VQE_medium_while: 36							12
+
+VQE_large_basic: 1							1
+VQE_large_shared: 22							22
+VQE_large_if: 24							24
+VQE_large_while: 132							88
+
+
+
+
+QNN_basic: 1								1
+QNN_shared: 2								2
+QNN_if: 2								2
+QNN_while: 2								1
+
+QNN_medium_basic: 1							1
+QNN_medium_shared: 12							12
+QNN_medium_if: 20							20
+QNN_medium_while: 160							60
+
+QNN_large_basic: 1							1
+QNN_large_shared: 36							36
+QNN_large_if: 36							36
+QNN_large_while: 576							324
