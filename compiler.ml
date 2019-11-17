@@ -483,27 +483,27 @@ Code Compilation below, p19.
 
 let rec codeTransformation u parid: underlineCom = 
 match u with
-| UnderlineAbort ql -> UnderlineAbort (appendWithoutDuplicate ql [Qvar "A"])
-| UnderlineSkip ql -> UnderlineAbort (appendWithoutDuplicate ql [Qvar "A"])
-| UnderlineInit q -> UnderlineAbort (appendWithoutDuplicate [q] [Qvar "A"]) 
+| UnderlineAbort ql -> UnderlineAbort (appendWithoutDuplicate [Qvar "A"] ql)
+| UnderlineSkip ql -> UnderlineAbort (appendWithoutDuplicate [Qvar "A"] ql)
+| UnderlineInit q -> UnderlineAbort (appendWithoutDuplicate [Qvar "A"] [q]) 
 | UnderlineUapp (uu, ql) -> (match uu with
   | UnderlineOneBRot (uuu, t) -> ( match (List.mem parid t) with 
     | true ->  UnderlineSeq(UnderlineSeq(UnderlineUapp(UnderlineGate("H",[""]),[Qvar "A"]),
-      UnderlineUapp(UnderlineGate("C-" ^ uuu,t), (appendWithoutDuplicate ql [Qvar "A"]))),
+      UnderlineUapp(UnderlineGate("C-" ^ uuu,t), (appendWithoutDuplicate [Qvar "A"] ql))),
       UnderlineUapp(UnderlineGate("H",[""]),[Qvar "A"])) 
-    | false -> UnderlineAbort (appendWithoutDuplicate ql [Qvar "A"]) )
+    | false -> UnderlineAbort (appendWithoutDuplicate [Qvar "A"] ql) )
   | UnderlineTwoBRot (uuu, t) -> ( match (List.mem parid t) with 
     | true -> UnderlineSeq(UnderlineSeq(UnderlineUapp(UnderlineGate("H",[""]),[Qvar "A"]),
-      UnderlineUapp(UnderlineGate("C-" ^ uuu,t), (appendWithoutDuplicate ql [Qvar "A"]))),
+      UnderlineUapp(UnderlineGate("C-" ^ uuu,t), (appendWithoutDuplicate [Qvar "A"] ql))),
       UnderlineUapp(UnderlineGate("H",[""]),[Qvar "A"]))
     (* nderlineUapp(UnderlineGate(uuu,t), (List.append ql [Qvar "Place holder 20, change later."]))*)
-    | false -> UnderlineAbort (appendWithoutDuplicate ql [Qvar "A"]) )(* UnderlineAbort (List.append ql [Qvar "Place holder 21, change later."]) *)
+    | false -> UnderlineAbort (appendWithoutDuplicate [Qvar "A"] ql) )(* UnderlineAbort (List.append ql [Qvar "Place holder 21, change later."]) *)
   (*_ -> UnderlineAbort (List.append ql [Qvar "Please only pass me Rotations."]) *) 
   (* ( match (List.mem parid t) with 
     | true -> UnderlineAbort (List.append ql [Qvar "Please only pass me Rotations."]) 
     (*UnderlineUapp(UnderlineGate(uuu,t), (List.append ql [Qvar "Place holder 00, change later."]))*)
     | false -> UnderlineAbort (List.append ql [Qvar "Please only pass me Rotations."]) ) *)
-  |_ -> UnderlineAbort (appendWithoutDuplicate ql [Qvar "A"])
+  |_ -> UnderlineAbort (appendWithoutDuplicate [Qvar "A"] ql)
   (* Note: H, CNOT derivative is Abort; assume we don't do higher order derivative so
   CX~CZ, CXX~CZZ are never differentiated. *) 
   )
