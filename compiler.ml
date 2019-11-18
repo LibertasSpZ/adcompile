@@ -434,11 +434,15 @@ able to compute the qlist of a command. Helpers below: *)
 
 
 let rec appendWithoutDuplicate l1 l2 : qlist = 
-  match l2 with 
-  | [] -> l1 
-  | x :: l -> (match (List.mem x l1) with 
-    | false -> appendWithoutDuplicate (List.append l1 [x]) l
-    | true -> appendWithoutDuplicate l1 l
+  (* let rl1 = List.rev l1 in *)
+  match l1 with 
+  | [] -> l2
+  | x :: l -> (match (List.mem x l2) with 
+    | false -> appendWithoutDuplicate l (x:: l2)(*match l with 
+      | [] -> x :: l2 (* l1 *)
+      | x' :: l' -> appendWithoutDuplicate l' (appendWithoutDuplicate [x] ( appendWithoutDuplicte [x'] l2 ))(* List.append x::x' (appendWithoutDuplicate l l')  *) (* (List.append l1 [x]) l *)
+    *)
+    | true -> appendWithoutDuplicate l l2(* l1 l *)
   )
 
 let rec qListOfCom u : qlist =
@@ -452,13 +456,13 @@ let rec qListOfCom u : qlist =
   | UnderlineUapp (_, ql) -> 
      ql
   | UnderlineSeq (c1, c2) ->
-     appendWithoutDuplicate (qListOfCom c1) (qListOfCom c2) 
+     appendWithoutDuplicate (List.rev(qListOfCom c1)) (qListOfCom c2) 
   | UnderlineCase (qb, u1, u2) ->
-     appendWithoutDuplicate [qb] (appendWithoutDuplicate (qListOfCom u1) (qListOfCom u2)) 
+     appendWithoutDuplicate [qb] (appendWithoutDuplicate (List.rev(qListOfCom u1)) (qListOfCom u2)) 
   | UnderlineBwhile (_, qb, u1) ->
      appendWithoutDuplicate [qb] (qListOfCom u1)
   | UnderlineAdd (u1, u2) -> 
-     appendWithoutDuplicate (qListOfCom u1) (qListOfCom u2) 
+     appendWithoutDuplicate (List.rev(qListOfCom u1)) (qListOfCom u2) 
 
  let rec qListOfUnparCom u : qlist =
   match u with 
@@ -471,9 +475,9 @@ let rec qListOfCom u : qlist =
   | Uapp (_, ql) -> 
      ql
   | Seq (c1, c2) ->
-     appendWithoutDuplicate (qListOfUnparCom c1) (qListOfUnparCom c2) 
+     appendWithoutDuplicate (List.rev(qListOfUnparCom c1)) (qListOfUnparCom c2) 
   | Case (qb, u1, u2) ->
-     appendWithoutDuplicate [qb] (appendWithoutDuplicate (qListOfUnparCom u1) (qListOfUnparCom u2)) 
+     appendWithoutDuplicate [qb] (appendWithoutDuplicate (List.rev(qListOfUnparCom u1)) (qListOfUnparCom u2)) 
   | Bwhile (_, qb, u1) ->
      appendWithoutDuplicate [qb] (qListOfUnparCom u1)
 (*********
@@ -513,7 +517,7 @@ match u with
  u2), UnderlineSeq (u1, codeTransformation u2 parid) )
  | UnderlineCase (qb, u1, u2) -> UnderlineCase (qb, codeTransformation u1 parid, 
  codeTransformation u2 parid)
- | UnderlineBwhile (num, qb, u1) -> (let bigli = appendWithoutDuplicate (qListOfCom u1) [Qvar "A"] in 
+ | UnderlineBwhile (num, qb, u1) -> (let bigli = appendWithoutDuplicate  [Qvar "A"] (qListOfCom u1) in 
 
     (match (num > 1) with 
     | false -> (match (num = 0) with 
