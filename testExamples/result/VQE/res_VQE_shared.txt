@@ -1,0 +1,50 @@
+q1:=∣0⟩; 
+q2:=∣0⟩; 
+A:=H()[A]; 
+q1,A:=C-X(t1)[q1,A]; 
+A:=H()[A]; 
+q2:=X(t2)[q2]; 
+q1:=Z(t3)[q1]; 
+q2:=Z(t4)[q2]; 
+q1:=H()[q1]; 
+q1,q2:=CNOT()[q1,q2]; 
+q2:=H()[q2]; 
+q2,q1:=CNOT()[q2,q1]; 
+q1:=Z(t1)[q1]; 
+q2:=Z(t2)[q2]; 
+q1:=X(t7)[q1]; 
+q2:=X(t8)[q2]; 
+q1:=Z(t9)[q1]; 
+q2:=Z(t10)[q2]
+
+
+q1:=∣0⟩; 
+q2:=∣0⟩; 
+q1:=X(t1)[q1]; 
+q2:=X(t2)[q2]; 
+q1:=Z(t3)[q1]; 
+q2:=Z(t4)[q2]; 
+q1:=H()[q1]; 
+q1,q2:=CNOT()[q1,q2]; 
+q2:=H()[q2]; 
+q2,q1:=CNOT()[q2,q1]; 
+A:=H()[A]; 
+q1,A:=C-Z(t1)[q1,A]; 
+A:=H()[A]; 
+q2:=Z(t2)[q2]; 
+q1:=X(t7)[q1]; 
+q2:=X(t8)[q2]; 
+q1:=Z(t9)[q1]; 
+q2:=Z(t10)[q2]
+
+
+
+ End of listing programs in the compiled set! 
+
+
+ # of progs in the compiled set of derivative prog: 
+
+ 2
+
+ Thanks for using our product. Have a good day. 
+

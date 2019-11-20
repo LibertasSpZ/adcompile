@@ -1,6 +1,6 @@
-num occurances of t1:				||			num progs in compiled derivative
-QAOA_basic: 1								1
-QAOA_shared: 3								3
+num occur       num progs	gates	lines(input)	layers	qubits	
+QAOA_basic: 1	        1
+QAOA_shared: 3	        3
 QAOA_if: 3								3
 QAOA_while: 2								1
 
@@ -17,20 +17,19 @@ QAOA_large_while: 276							92
 
 
 
-VQE_basic: 1								1
-VQE_shared: 2								2
-VQE_if: 2								2
-VQE_while: 2								1
+VQE_basic: 1	        1	14	16		1	2
+VQE_shared: 2		2	14	16		1	2
+VQE_if: 4		4	28	38		2	2
+VQE_while: 6		4	42	34		3	2				
 
-VQE_medium_basic: 1							1
-VQE_medium_shared: 6							6
-VQE_medium_if: 6							6
-VQE_medium_while: 36							12
+VQE_medium_if: 15	15	224	241		3	12
+VQE_medium_while: 35	15	96	112		5	12
 
-VQE_large_basic: 1							1
-VQE_large_shared: 22							22
-VQE_large_if: 24							24
-VQE_large_while: 132							88
+
+VQE_large_if: 40	40	576	628		5		40
+VQE_large_while: 248	40	1984	368		17		40
+
+(*Note: num layers in bounded while is computed by T times number layers in loop body.*)
 
 
 
