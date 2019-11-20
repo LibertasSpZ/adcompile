@@ -1,0 +1,292 @@
+q1:=∣0⟩; 
+q2:=∣0⟩; 
+q3:=∣0⟩; 
+q1,q2:=CNOT()[q1,q2]; 
+A:=H()[A]; 
+A,q2:=C-Z(t1)[A,q2]; 
+A:=H()[A]; 
+q1,q2:=CNOT()[q1,q2]; 
+q2,q3:=CNOT()[q2,q3]; 
+q3:=Z(t1)[q3]; 
+q2,q3:=CNOT()[q2,q3]; 
+q3,q1:=CNOT()[q3,q1]; 
+q1:=Z(t1)[q1]; 
+q3,q1:=CNOT()[q3,q1]; 
+q1:=X(t4)[q1]; 
+q2:=X(t4)[q2]; 
+q3:=X(t4)[q3]; 
+case M(q1) = 0 then 
+    q1,q2:=CNOT()[q1,q2]; 
+    q2:=Z(t10)[q2]; 
+    q1,q2:=CNOT()[q1,q2]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3:=Z(t10)[q3]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=Z(t10)[q1]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=X(t1)[q1]; 
+    q2:=X(t1)[q2]; 
+    q3:=X(t1)[q3]
+else
+    q1,q2:=CNOT()[q1,q2]; 
+    q2:=Z(t1)[q2]; 
+    q1,q2:=CNOT()[q1,q2]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3:=Z(t1)[q3]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=Z(t1)[q1]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=X(t4)[q1]; 
+    q2:=X(t4)[q2]; 
+    q3:=X(t4)[q3]
+end
+
+
+q1:=∣0⟩; 
+q2:=∣0⟩; 
+q3:=∣0⟩; 
+q1,q2:=CNOT()[q1,q2]; 
+q2:=Z(t1)[q2]; 
+q1,q2:=CNOT()[q1,q2]; 
+q2,q3:=CNOT()[q2,q3]; 
+A:=H()[A]; 
+A,q3:=C-Z(t1)[A,q3]; 
+A:=H()[A]; 
+q2,q3:=CNOT()[q2,q3]; 
+q3,q1:=CNOT()[q3,q1]; 
+q1:=Z(t1)[q1]; 
+q3,q1:=CNOT()[q3,q1]; 
+q1:=X(t4)[q1]; 
+q2:=X(t4)[q2]; 
+q3:=X(t4)[q3]; 
+case M(q1) = 0 then 
+    q1,q2:=CNOT()[q1,q2]; 
+    q2:=Z(t10)[q2]; 
+    q1,q2:=CNOT()[q1,q2]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3:=Z(t10)[q3]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=Z(t10)[q1]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=X(t1)[q1]; 
+    q2:=X(t1)[q2]; 
+    q3:=X(t1)[q3]
+else
+    q1,q2:=CNOT()[q1,q2]; 
+    q2:=Z(t1)[q2]; 
+    q1,q2:=CNOT()[q1,q2]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3:=Z(t1)[q3]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=Z(t1)[q1]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=X(t4)[q1]; 
+    q2:=X(t4)[q2]; 
+    q3:=X(t4)[q3]
+end
+
+
+q1:=∣0⟩; 
+q2:=∣0⟩; 
+q3:=∣0⟩; 
+q1,q2:=CNOT()[q1,q2]; 
+q2:=Z(t1)[q2]; 
+q1,q2:=CNOT()[q1,q2]; 
+q2,q3:=CNOT()[q2,q3]; 
+q3:=Z(t1)[q3]; 
+q2,q3:=CNOT()[q2,q3]; 
+q3,q1:=CNOT()[q3,q1]; 
+A:=H()[A]; 
+A,q1:=C-Z(t1)[A,q1]; 
+A:=H()[A]; 
+q3,q1:=CNOT()[q3,q1]; 
+q1:=X(t4)[q1]; 
+q2:=X(t4)[q2]; 
+q3:=X(t4)[q3]; 
+case M(q1) = 0 then 
+    q1,q2:=CNOT()[q1,q2]; 
+    q2:=Z(t10)[q2]; 
+    q1,q2:=CNOT()[q1,q2]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3:=Z(t10)[q3]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=Z(t10)[q1]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=X(t1)[q1]; 
+    q2:=X(t1)[q2]; 
+    q3:=X(t1)[q3]
+else
+    q1,q2:=CNOT()[q1,q2]; 
+    q2:=Z(t1)[q2]; 
+    q1,q2:=CNOT()[q1,q2]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3:=Z(t1)[q3]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=Z(t1)[q1]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=X(t4)[q1]; 
+    q2:=X(t4)[q2]; 
+    q3:=X(t4)[q3]
+end
+
+
+q1:=∣0⟩; 
+q2:=∣0⟩; 
+q3:=∣0⟩; 
+q1,q2:=CNOT()[q1,q2]; 
+q2:=Z(t1)[q2]; 
+q1,q2:=CNOT()[q1,q2]; 
+q2,q3:=CNOT()[q2,q3]; 
+q3:=Z(t1)[q3]; 
+q2,q3:=CNOT()[q2,q3]; 
+q3,q1:=CNOT()[q3,q1]; 
+q1:=Z(t1)[q1]; 
+q3,q1:=CNOT()[q3,q1]; 
+q1:=X(t4)[q1]; 
+q2:=X(t4)[q2]; 
+q3:=X(t4)[q3]; 
+case M(q1) = 0 then 
+    q1,q2:=CNOT()[q1,q2]; 
+    q2:=Z(t10)[q2]; 
+    q1,q2:=CNOT()[q1,q2]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3:=Z(t10)[q3]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=Z(t10)[q1]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    A:=H()[A]; 
+    A,q1:=C-X(t1)[A,q1]; 
+    A:=H()[A]; 
+    q2:=X(t1)[q2]; 
+    q3:=X(t1)[q3]
+else
+    q1,q2:=CNOT()[q1,q2]; 
+    A:=H()[A]; 
+    A,q2:=C-Z(t1)[A,q2]; 
+    A:=H()[A]; 
+    q1,q2:=CNOT()[q1,q2]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3:=Z(t1)[q3]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=Z(t1)[q1]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=X(t4)[q1]; 
+    q2:=X(t4)[q2]; 
+    q3:=X(t4)[q3]
+end
+
+
+q1:=∣0⟩; 
+q2:=∣0⟩; 
+q3:=∣0⟩; 
+q1,q2:=CNOT()[q1,q2]; 
+q2:=Z(t1)[q2]; 
+q1,q2:=CNOT()[q1,q2]; 
+q2,q3:=CNOT()[q2,q3]; 
+q3:=Z(t1)[q3]; 
+q2,q3:=CNOT()[q2,q3]; 
+q3,q1:=CNOT()[q3,q1]; 
+q1:=Z(t1)[q1]; 
+q3,q1:=CNOT()[q3,q1]; 
+q1:=X(t4)[q1]; 
+q2:=X(t4)[q2]; 
+q3:=X(t4)[q3]; 
+case M(q1) = 0 then 
+    q1,q2:=CNOT()[q1,q2]; 
+    q2:=Z(t10)[q2]; 
+    q1,q2:=CNOT()[q1,q2]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3:=Z(t10)[q3]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=Z(t10)[q1]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=X(t1)[q1]; 
+    A:=H()[A]; 
+    A,q2:=C-X(t1)[A,q2]; 
+    A:=H()[A]; 
+    q3:=X(t1)[q3]
+else
+    q1,q2:=CNOT()[q1,q2]; 
+    q2:=Z(t1)[q2]; 
+    q1,q2:=CNOT()[q1,q2]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    A:=H()[A]; 
+    A,q3:=C-Z(t1)[A,q3]; 
+    A:=H()[A]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=Z(t1)[q1]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=X(t4)[q1]; 
+    q2:=X(t4)[q2]; 
+    q3:=X(t4)[q3]
+end
+
+
+q1:=∣0⟩; 
+q2:=∣0⟩; 
+q3:=∣0⟩; 
+q1,q2:=CNOT()[q1,q2]; 
+q2:=Z(t1)[q2]; 
+q1,q2:=CNOT()[q1,q2]; 
+q2,q3:=CNOT()[q2,q3]; 
+q3:=Z(t1)[q3]; 
+q2,q3:=CNOT()[q2,q3]; 
+q3,q1:=CNOT()[q3,q1]; 
+q1:=Z(t1)[q1]; 
+q3,q1:=CNOT()[q3,q1]; 
+q1:=X(t4)[q1]; 
+q2:=X(t4)[q2]; 
+q3:=X(t4)[q3]; 
+case M(q1) = 0 then 
+    q1,q2:=CNOT()[q1,q2]; 
+    q2:=Z(t10)[q2]; 
+    q1,q2:=CNOT()[q1,q2]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3:=Z(t10)[q3]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=Z(t10)[q1]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=X(t1)[q1]; 
+    q2:=X(t1)[q2]; 
+    A:=H()[A]; 
+    A,q3:=C-X(t1)[A,q3]; 
+    A:=H()[A]
+else
+    q1,q2:=CNOT()[q1,q2]; 
+    q2:=Z(t1)[q2]; 
+    q1,q2:=CNOT()[q1,q2]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3:=Z(t1)[q3]; 
+    q2,q3:=CNOT()[q2,q3]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    A:=H()[A]; 
+    A,q1:=C-Z(t1)[A,q1]; 
+    A:=H()[A]; 
+    q3,q1:=CNOT()[q3,q1]; 
+    q1:=X(t4)[q1]; 
+    q2:=X(t4)[q2]; 
+    q3:=X(t4)[q3]
+end
+
+
+
+ End of listing programs in the compiled set! 
+
+
+ # of progs in the compiled set of derivative prog: 
+
+ 6
+
+ Thanks for using our product. Have a good day. 
+

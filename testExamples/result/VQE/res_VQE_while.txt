@@ -19,8 +19,6 @@ q2:=Z(t10)[q2];
 case M(q2) = 0 then 
     skip[q1,q2]
 else
-    q1:=∣0⟩; 
-    q2:=∣0⟩; 
     q1:=X(t1)[q1]; 
     q2:=X(t2)[q2]; 
     q1:=Z(t3)[q1]; 
@@ -64,8 +62,6 @@ q2:=Z(t10)[q2];
 case M(q2) = 0 then 
     skip[q1,q2]
 else
-    q1:=∣0⟩; 
-    q2:=∣0⟩; 
     q1:=X(t1)[q1]; 
     q2:=X(t2)[q2]; 
     q1:=Z(t3)[q1]; 
@@ -107,8 +103,6 @@ q2:=Z(t10)[q2];
 case M(q2) = 0 then 
     abort[A,q1,q2]
 else
-    q1:=∣0⟩; 
-    q2:=∣0⟩; 
     A:=H()[A]; 
     A,q1:=C-X(t1)[A,q1]; 
     A:=H()[A]; 
@@ -152,8 +146,6 @@ q2:=Z(t10)[q2];
 case M(q2) = 0 then 
     abort[A,q1,q2]
 else
-    q1:=∣0⟩; 
-    q2:=∣0⟩; 
     q1:=X(t1)[q1]; 
     q2:=X(t2)[q2]; 
     q1:=Z(t3)[q1]; 

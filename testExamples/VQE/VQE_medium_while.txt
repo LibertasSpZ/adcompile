@@ -54,7 +54,7 @@
 
 
 
-while{2} M[q0] = 1 do 
+while{2} M[q1] = 1 do 
 	
 	
 

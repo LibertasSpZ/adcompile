@@ -1,18 +1,14 @@
 num occur       num progs	gates	lines(input)	layers	qubits	
-QAOA_basic: 1	        1
-QAOA_shared: 3	        3
-QAOA_if: 3								3
-QAOA_while: 2								1
+QNN_basic: 1	        1	20	24		1	4
+QNN_shared: 5	        5	20	24		1	4
+QNN_if: 10		10	60	67		2	4
+QNN_while: 15		10	60	66		3	4
 
-QAOA_medium_basic:1							1
-QAOA_medium_shared: 16							16
-QAOA_medium_if:16							16
-QAOA_medium_while:96							32
 
-QAOA_large_basic:1							1
-QAOA_large_shared:46							46
-QAOA_large_if:46 							46
-QAOA_large_while: 276							92
+QNN_medium_if:24	24	165	189		3	18
+QNN_medium_while:56	24	231	121		5	18
+QNN_large_if:48 	48	363	414		6	36
+QNN_large_while: 504	48	2079	244		33	36
 
 
 
@@ -20,31 +16,26 @@ QAOA_large_while: 276							92
 VQE_basic: 1	        1	14	16		1	2
 VQE_shared: 2		2	14	16		1	2
 VQE_if: 4		4	28	38		2	2
-VQE_while: 6		4	42	34		3	2				
+VQE_while: 6		4	42	32		3	2				
 
 VQE_medium_if: 15	15	224	241		3	12
-VQE_medium_while: 35	15	96	112		5	12
-
-
-VQE_large_if: 40	40	576	628		5		40
-VQE_large_while: 248	40	1984	368		17		40
-
-(*Note: num layers in bounded while is computed by T times number layers in loop body.*)
+VQE_medium_while: 35	15	224	112		5	12
+VQE_large_if: 40	40	576	628		5	40
+VQE_large_while: 248	40	1984	368		17	40
 
 
 
 
-QNN_basic: 1								1
-QNN_shared: 2								2
-QNN_if: 2								2
-QNN_while: 2								1
 
-QNN_medium_basic: 1							1
-QNN_medium_shared: 12							12
-QNN_medium_if: 20							20
-QNN_medium_while: 160							60
+QAOA_basic: 1		1	12	15		1	3		
+QAOA_shared: 3		3	12	15		1	3	
+QAOA_if: 6		6	36	41		2	3
+QAOA_while: 9		6	36	29		3.      3
 
-QNN_large_basic: 1							1
-QNN_large_shared: 36							36
-QNN_large_if: 36							36
-QNN_large_while: 576							324
+QAOA_medium_if: 18	18	120	142		3	18
+QAOA_medium_while: 42	18	168	94		5	18
+QAOA_large_if: 36	36	264	315		6	36
+QAOA_large_while: 378	36	1512	190		33	36
+
+
+(*Note: num layers/gates in bounded while is computed by T times number layers/gates in loop body.*)
