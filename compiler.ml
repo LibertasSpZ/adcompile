@@ -121,7 +121,7 @@ let rec unparse_com c lv : string =
      let nt = Printf.sprintf "%d" num in
      let q = unparse_qbit qb in
      let s1 = unparse_com u1 (lv+1) in
-     it ^ "while^" ^ nt ^ " M(" ^ q ^ ")= 1 do " ^ s1 ^ "\n" ^ it ^ "od"  
+     it ^ "while^" ^ nt ^ " M(" ^ q ^ ")= 1 do \n" ^ s1 ^ "\n" ^ it ^ "od"  
 (* endof syntax for parameterized progs (\S 4.1) *)
 
 
@@ -193,7 +193,7 @@ let rec unparse_UNcom c : string =
      let nt = Printf.sprintf "%d" num in
      let q = unparse_qbit qb in
      let s1 = unparse_UNcom u1 in
-     "while^" ^ nt ^ " M(" ^ q ^ ")= 1 do " ^ s1 ^ "\n od"
+     "while^" ^ nt ^ " M(" ^ q ^ ")= 1 do \n" ^ s1 ^ "\n od"
 (* endof syntax for UNparameterized progs (\S 3.1) *)
 
 
@@ -232,39 +232,40 @@ let unparse_UnderlineUnitary u : string =
      g ^ "(" ^ st ^ ")"
 
 
-let rec unparse_UnderlineCom c : string = 
+let rec unparse_UnderlineCom c lv : string = 
+  let it = indent lv in 
   match c with
   | UnderlineAbort ql -> 
      let sql = unparse_qlist ql in
-     "Abort[" ^ sql ^ "]"
+     it ^ "Abort[" ^ sql ^ "]"
   | UnderlineSkip ql -> 
      let sql = unparse_qlist ql in
-      "Skip[" ^ sql ^ "]"
+      it ^ "Skip[" ^ sql ^ "]"
   | UnderlineInit q -> 
      let s = unparse_qbit q in 
-     s ^ ":=∣0⟩"
+     it ^ s ^ ":=∣0⟩"
   | UnderlineUapp (u, ql) -> 
      let su = unparse_UnderlineUnitary u in 
      let sql = unparse_qlist ql in 
-     sql ^ ":=" ^ su ^ "[" ^ sql ^ "]"
+     it ^ sql ^ ":=" ^ su ^ "[" ^ sql ^ "]"
   | UnderlineSeq (c1, c2) ->
-     let s1 = unparse_UnderlineCom c1 in
-     let s2 = unparse_UnderlineCom c2 in
+     let s1 = unparse_UnderlineCom c1 lv in
+     let s2 = unparse_UnderlineCom c2 lv in
      s1 ^ "; \n" ^ s2
   | UnderlineCase (qb, u1, u2) ->
      let q = unparse_qbit qb in
-     let s1 = unparse_UnderlineCom u1 in
-     let s2 = unparse_UnderlineCom u2 in
-     "case M(" ^ q ^ ") = 0 then \n" ^ s1 ^ "\nelse\n" ^ s2 ^ "\nend"
+     let s1 = unparse_UnderlineCom u1 (lv+1) in
+     let s2 = unparse_UnderlineCom u2 (lv+1) in
+     it ^ "case M(" ^ q ^ ") = 0 then \n" ^ s1 ^ it ^ "\nelse\n" ^ s2 ^ it ^ "\nend"
   | UnderlineBwhile (num, qb, u1) ->
      let nt = Printf.sprintf "%d" num in
      let q = unparse_qbit qb in
-     let s1 = unparse_UnderlineCom u1 in
-     "while^" ^ nt ^ " M(" ^ q ^ ")= 1 do " ^ s1 ^ "\n od"
+     let s1 = unparse_UnderlineCom u1 (lv+1) in
+     it ^ "while^" ^ nt ^ " M(" ^ q ^ ")= 1 do \n" ^ s1 ^ it ^ "\n od"
   | UnderlineAdd (u1, u2) -> 
-     let s1 = unparse_UnderlineCom u1 in
-     let s2 = unparse_UnderlineCom u2 in
-    s1 ^ "+" ^ s2
+     let s1 = unparse_UnderlineCom u1 lv in
+     let s2 = unparse_UnderlineCom u2 lv in
+    s1 ^ "\n" ^ it ^ "+" ^ "\n" ^ s2
 
 (* Note that when printing we will have different lengths
  of the " ___ " lines and length correspond to the number

@@ -98,22 +98,30 @@ let automate_qiuDao f papar =
 	let c4 = parser_to_compiler (prog) in
 	let ndprog = normalToNonDet (c4) in 
 	(* let papar = "t2" in *)
-	let daoChengXu = codeTransformation ndprog papar in 
-    (* printList *) (codeCompilation daoChengXu)
+	(* let daoChengXu  = *) codeTransformation ndprog papar (* in 
+    (* printList *) (codeCompilation daoChengXu) *)
 
 let () = 
   let len = Array.length Sys.argv in
     match len with
-    | 3 -> let cnextline = "\n # of progs in the compiled set of derivative prog: \n" in
+    | 3 -> let cnextline = "\n # of progs in the compiled multiset of derivative prog: \n" in
     	   let cnextline2 = "\n Thanks for using our product. Have a good day. \n" in
-    	   let resli = automate_qiuDao Sys.argv.(1) Sys.argv.(2) in 
+    	   let cnextline3 = "\n The transformed code (as Summation of progs) is: \n " in 
+    	   let cnextline4 = "\n and the elements of the complied multiset of derivative progs are: \n" in 
+    	   let (* resli *) daoChengXu = automate_qiuDao Sys.argv.(1) Sys.argv.(2) in 
+    	   let ctDaochengdu = unparse_UnderlineCom daoChengXu 0 in 
+    	   let resli = codeCompilation daoChengXu in 
     	   let bd = List.length(resli) in
+    	   	   print_endline cnextline3;
+    	   	   print_endline ctDaochengdu;
+    	   	   print_endline cnextline4;
     	       printList resli; 
     	       print_endline cnextline;
     	       Printf.printf " %d\n" bd;  
     	       (* Printf.sprintf string_of_int(bd); *)
     	       print_endline cnextline2 
-    | _ -> print_endline "error!"
+    | _ -> print_endline "error! Please pass me exactly 2 args, first the file, second the parameter!
+    Have a good day. "
  
 (*** let test_p10 = 
 let c4 = parser_to_compiler (parse_file) in
