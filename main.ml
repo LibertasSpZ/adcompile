@@ -4,8 +4,7 @@ open Ast
 open Compiler
 
 
-(* Needs a parser-> compiler mapping function, and a driver to
-execute the conversion. Worry about printing later! *)
+
 let astqubit_to_str qub = 
 	match qub with
 | Ast.Q num -> let snum = string_of_int(num) in 
@@ -52,18 +51,12 @@ let astU_to_compU unita =
 
 
 
-(* Need to convert the Parser qubit lists to compiler qubit 
-lists too. *)
 
-(* let rec str_to_complql strl =
-	match strl with
-| [] -> []
-| x :: l' -> (Compiler.Qvar x) :: (str_to_complql l') *)
 
 let rec parser_to_compiler prog =
 	match prog with
-| Ast.Abort (a,b) -> Compiler.Abort ((* str_to_complql*)(astqubl_to_strl b)) 
-| Ast.Skip (a,b) -> Compiler.Skip ((* str_to_complql*)(astqubl_to_strl b)) 
+| Ast.Abort (a,b) -> Compiler.Abort ((astqubl_to_strl b)) 
+| Ast.Skip (a,b) -> Compiler.Skip ((astqubl_to_strl b)) 
 | Ast.Uapp (a,b) -> Compiler.Uapp ((astU_to_compU a), (astqubl_to_strl b))
 | Ast.Init q -> Compiler.Init (astqubit_to_str q)
 | Ast.Seq (a,b) -> Compiler.Seq ((parser_to_compiler a), (parser_to_compiler b))
@@ -71,7 +64,6 @@ let rec parser_to_compiler prog =
 							parser_to_compiler p2)
 | Ast.Bwhile (n, ql, p1) -> Compiler.Bwhile (n, astqubit_to_str (List.hd ql), 
 							parser_to_compiler p1)
-(* | _ -> Compiler.Abort [Compiler.Qvar "WA"] *)
 
 
 (*** The above: mapping btw parser to compler ***)
@@ -97,9 +89,7 @@ let automate_qiuDao f papar =
 	let prog = parse_file f in 
 	let c4 = parser_to_compiler (prog) in
 	let ndprog = normalToNonDet (c4) in 
-	(* let papar = "t2" in *)
-	(* let daoChengXu  = *) codeTransformation ndprog papar (* in 
-    (* printList *) (codeCompilation daoChengXu) *)
+	codeTransformation ndprog papar 
 
 let () = 
   let len = Array.length Sys.argv in
@@ -108,7 +98,7 @@ let () =
     	   let cnextline2 = "\n Thanks for using our product. Have a good day. \n" in
     	   let cnextline3 = "\n The transformed code (as Summation of progs) is: \n " in 
     	   let cnextline4 = "\n and the elements of the complied multiset of derivative progs are: \n" in 
-    	   let (* resli *) daoChengXu = automate_qiuDao Sys.argv.(1) Sys.argv.(2) in 
+    	   let  daoChengXu = automate_qiuDao Sys.argv.(1) Sys.argv.(2) in 
     	   let ctDaochengdu = unparse_UnderlineCom daoChengXu 0 in 
     	   let resli = codeCompilation daoChengXu in 
     	   let bd = List.length(resli) in
@@ -118,14 +108,8 @@ let () =
     	       printList resli; 
     	       print_endline cnextline;
     	       Printf.printf " %d\n" bd;  
-    	       (* Printf.sprintf string_of_int(bd); *)
+    	      
     	       print_endline cnextline2 
     | _ -> print_endline "error! Please pass me exactly 2 args, first the file, second the parameter!
     Have a good day. "
  
-(*** let test_p10 = 
-let c4 = parser_to_compiler (parse_file) in
-let ndprog = normalToNonDet (c4) in 
-let papar = "t2" in 
-let daoChengXu = codeTransformation ndprog papar in 
-  (* let opDaoChengXU = *) codeCompilation daoChengXu  ***)
