@@ -15,7 +15,7 @@ type evaledpar = evaledparid list
 
 (* type evalpar = par -> evaledpar *)
 (* evaluating a list of parameters, e.g: (theta_1,theta_2)\mapsto
-(0,5,0.7) . Semantics. No need yet for symbolic derivatives. *)
+(0,5,0.7) . Semantics. No need yet for computing symbolic derivatives. *)
 
 
 
@@ -44,6 +44,11 @@ type com =
 | Seq of com * com
 | Case of qbit * com * com
 | Bwhile of int * qbit * com 
+
+
+(***  Below: some data types necessary to contruct the parametered program
+types.  ***)
+
 
 let unparse_qbit qb : string =
   match qb with
@@ -85,6 +90,11 @@ let rec indent n : string =
   | 0 -> ""
   | x -> "    " ^ indent (x-1)
 
+
+
+(*** unparse: function for presenting the parameterized program as a string. ***)
+
+
 let rec unparse_com c lv : string = 
   let it = indent lv in 
   match c with
@@ -118,7 +128,8 @@ let rec unparse_com c lv : string =
 (* endof syntax for parameterized progs (\S 4.1) *)
 
 
-(* below: syntax for UNparameterized progs (\S 3.1) *)
+(**** below: syntax for unparameterized progs. No need for computing 
+symbolic derivatives yet. ****)
 
 type unparunitary = 
 | UnparGate of uid * evaledpar 
@@ -187,11 +198,11 @@ let rec unparse_UNcom c : string =
      let q = unparse_qbit qb in
      let s1 = unparse_UNcom u1 in
      "while^" ^ nt ^ " M(" ^ q ^ ")= 1 do \n" ^ s1 ^ "\n od"
-(* endof syntax for UNparameterized progs (\S 3.1) *)
+(* endof syntax for UNparameterized progs (briefly mentioned in \S 3.1) *)
 
 
 
-(* below: syntax for non-deterministic parameterized progs (\S 5.1) *)
+(* below: syntax for additive parameterized progs (\S 4.1) of the manuscript. *)
 type underlineUnitary = 
 | UnderlineGate of uid * par
 | UnderlineOneBRot of uid * par
@@ -271,7 +282,7 @@ let rec unparse_UnderlineCom c lv : string =
 
 
 
-(***** Code Transformation Rules (Figure 6) *****)
+(***** Code Transformation Rules (Figure 4) *****)
 
 
 (* First, given any normal parameterized program, we view it
@@ -354,8 +365,11 @@ let rec qListOfCom u : qlist =
      appendWithoutDuplicate [qb] (appendWithoutDuplicate (List.rev(qListOfUnparCom u1)) (qListOfUnparCom u2)) 
   | Bwhile (_, qb, u1) ->
      appendWithoutDuplicate [qb] (qListOfUnparCom u1)
-(*********
-Code Compilation below.
+
+
+(********* Done with helpers. Now
+the real Code Transformation rules (again, Fig 4) 
+below.
 ********)
 
 
@@ -415,9 +429,10 @@ match u with
 
 
 (* For the Compilation rules let's just use list to represent multiset, since
-we don't care about order and we throw unnecessary aborts away on the go.*)
+we don't care about order for printing out the elements, and we throw unnecessary 
+aborts away on the go.*)
 
-(*** Compilation rules: Fig 5, p14 ***)
+(*** Compilation rules: Fig 3 ***)
 
 
 
@@ -477,6 +492,9 @@ let rec createIf qb l1 l2 : com list =
 
 
   (* List.append [Case (qb, l1.hd, l2.hd)] (recCreateIf qb l1.) *)
+
+  (*** Done with helpers. Now the real
+  code compilation rules: Fig 3. ***)
 
 let rec codeCompilation u : com list =
   match  u with

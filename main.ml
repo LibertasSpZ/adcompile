@@ -3,7 +3,10 @@ open Printf
 open Ast
 open Compiler
 
+(***  Below are a few helper functions to connect the parsed progs 
+    (Ast.) to the programs for compiler (Compiler.) 
 
+  ***)
 
 let astqubit_to_str qub = 
 	match qub with
@@ -70,10 +73,18 @@ let rec parser_to_compiler prog =
 
 
 
+
+
+(*** Read in the file ***)
+
 let parse_file f  =
   let lexbuf = Lexing.from_channel (open_in f) in
   Adparser.program Adlexer.token lexbuf
 
+
+(*** Helper function for printing out the elements in the set of Compile(P) 
+one by one.
+***)
 
 let rec printList li =
  match li with 
@@ -85,11 +96,24 @@ let rec printList li =
              print_endline cnextline;
              printList l'
 
+
+
+(***  automate_qiuDao is a driver for code-transformation.  ***)
+
+
 let automate_qiuDao f papar = 
 	let prog = parse_file f in 
 	let c4 = parser_to_compiler (prog) in
 	let ndprog = normalToNonDet (c4) in 
 	codeTransformation ndprog papar 
+
+
+
+(*** Below: Final driver, calls automate_qiuDao to print the code transformation
+result, then applies compilation rules to obtain the compiled set of programs 
+Compile(P), and finally prints out the list.  ***)
+
+
 
 let () = 
   let len = Array.length Sys.argv in
