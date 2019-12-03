@@ -1,6 +1,10 @@
 # adcompiler
 
- This is an autodifferentiation parser and compiler as implementation of the PLDI submission ``On the Principles of Quantum Differential Programming Languages". It computes and prints the multiset of differential programs given an original parameterized quantum program, then prints the size of the multiset.
+ This is an autodifferentiation parser and compiler as implementation of the code-transformation in the following paper:
+  
+*Shaopeng Zhu, Shih-Han Hung, Shouvanik Chakrabarti, and Xiaodi Wu.  On the Principles of Quantum Differential Programming Languages.* [manuscript](https://www.cs.umd.edu/~xwu/papers/q_diff_pl.pdf), 2019. 
+  
+It computes and prints the multiset of differential programs given an original parameterized quantum program, then prints the size of the multiset.
 
 
 To run the compiler, issue the command 
