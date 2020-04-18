@@ -2,7 +2,7 @@
 
 This repository contains the instructions for running and the source code organization for a quantum autodifferentiation parser and compiler, which is the primary software artifact for the paper
   
-*Shaopeng Zhu, Shih-Han Hung, Shouvanik Chakrabarti, and Xiaodi Wu.  On the Principles of Quantum Differential Programming Languages.* [manuscript, 2019](https://www.cs.umd.edu/~xwu/papers/q_diff_pl.pdf); to appear in [PLDI, 2020](https://pldi20.sigplan.org/details/pldi-2020-papers/51/On-the-Principles-of-Differential-Quantum-Programming-Languages) 
+*Shaopeng Zhu, Shih-Han Hung, Shouvanik Chakrabarti, and Xiaodi Wu.  On the Principles of Quantum Differential Programming Languages.* [PLDI 2020](https://pldi20.sigplan.org/details/pldi-2020-papers/51/On-the-Principles-of-Differential-Quantum-Programming-Languages)[arXiv: 2004.01122](https://arxiv.org/abs/2004.01122) 
 
 
   
